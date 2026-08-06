@@ -1,11 +1,30 @@
 .DS_Store
 *.log
+*.swp
+*.tmp
+
 .env
 .env.*
 !.env.example
+
 node_modules/
+.pnpm-store/
 dist/
 build/
 coverage/
+.turbo/
+.expo/
+
 playwright-report/
 test-results/
+
+.idea/
+.vscode/
+*.xcuserstate
+DerivedData/
+
+# Keep reviewed prototype references and screenshots under version control.
+
+# Bundled Product Design device/keyboard chrome is proprietary template material
+# with no separate redistribution grant in the package. Keep it local only.
+prototypes/nextset-directions/public/assets/
