@@ -1,0 +1,44 @@
+name: Bug report
+description: Report reproducible incorrect NextSet behaviour
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User impact
+      description: What was the user trying to do, and what broke?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction
+      description: Include build, device/OS, units, network state, programme/session state, and exact steps.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual result
+    validations:
+      required: true
+  - type: dropdown
+    id: data-risk
+    attributes:
+      label: Did workout data appear lost, duplicated, or changed?
+      options: ["No", "Possibly", "Yes"]
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Logs, screenshots, recordings, export diff, and whether the issue survives relaunch.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed credentials and private health/training data from attachments.
+          required: true

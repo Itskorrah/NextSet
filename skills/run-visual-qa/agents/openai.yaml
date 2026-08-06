@@ -1,0 +1,4 @@
+interface:
+  display_name: "Visual QA"
+  short_description: "Compare rendered UI with its visual source"
+  default_prompt: "Use $run-visual-qa to compare a rendered NextSet screen with its approved source."

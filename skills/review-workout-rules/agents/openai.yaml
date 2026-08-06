@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workout Rule Review"
+  short_description: "Challenge workout rules and edge cases"
+  default_prompt: "Use $review-workout-rules to review a NextSet workout or progression rule."

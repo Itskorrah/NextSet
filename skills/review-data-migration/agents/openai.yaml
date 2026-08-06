@@ -1,0 +1,4 @@
+interface:
+  display_name: "Data Migration Review"
+  short_description: "Prove migration safety and recoverability"
+  default_prompt: "Use $review-data-migration to review a NextSet schema migration and its recovery evidence."

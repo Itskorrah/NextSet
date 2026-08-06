@@ -1,0 +1,4 @@
+interface:
+  display_name: "Accessibility Review"
+  short_description: "Audit NextSet flows for inclusive use"
+  default_prompt: "Use $review-accessibility to audit a NextSet flow against the accessibility requirements."

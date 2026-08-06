@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release Readiness"
+  short_description: "Assess evidence for a safe NextSet release"
+  default_prompt: "Use $assess-release-readiness to assess whether a NextSet release candidate is ready."

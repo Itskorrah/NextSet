@@ -1,0 +1,4 @@
+interface:
+  display_name: "Visual Implementation"
+  short_description: "Implement an approved NextSet visual system"
+  default_prompt: "Use $implement-visual-direction to implement an approved NextSet screen from a selected visual source."

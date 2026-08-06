@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security or privacy report
+    url: https://github.com/Itskorrah/NextSet/security
+    about: Do not disclose credentials or private user data in a public issue.

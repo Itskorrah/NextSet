@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Requirement Review"
+  short_description: "Check requirements for scope and evidence"
+  default_prompt: "Use $review-product-requirements to review a NextSet product requirement before approval."
