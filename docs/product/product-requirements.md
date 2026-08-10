@@ -202,10 +202,12 @@ The account-free local-first default, equal fixed/flexible scheduling and user-c
 
 1. Which visual direction to adopt.
 2. Which elements from the other directions to combine.
-3. Whether the proposed MVP boundary is acceptable.
+3. Whether the proposed MVP boundary, including the critical journeys in [`user-journeys.md`](user-journeys.md), is acceptable.
 4. Whether the architecture recommendation is acceptable.
 5. Whether any feature should be added, removed or deferred.
 6. Whether the product feels broad enough for mainstream gym users.
 7. Whether any part feels generic, cluttered or unnecessarily complicated.
+
+Approval of item 3 records approval of both the proposed MVP boundary and the documented critical journeys; requested changes should name the affected feature or journey.
 
 The following are deliberately deferred to normal product/implementation validation rather than silently assumed or escalated now: minimum supported OS versions, launch locales, template catalogue content and professional review process, analytics consent model, final e1RM rule, portable-restore timing, and any paid offering.

@@ -1,0 +1,512 @@
+{
+  "capturedAt": "2026-08-10T03:34:06.468Z",
+  "previewUrl": "http://127.0.0.1:4173/",
+  "browser": "Playwright Chromium 149 via @playwright/test 1.61.1",
+  "viewport": {
+    "width": 1400,
+    "height": 1200
+  },
+  "context": {
+    "locale": "en-AU",
+    "colorScheme": "light",
+    "reducedMotion": "reduce"
+  },
+  "records": [
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Onboarding",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-onboarding-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 8
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Programme selection",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-programme-selection-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 5
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Today",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-today-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 9
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Active workout",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-active-workout-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 17
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Set entry",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-set-entry-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 16
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Exercise substitution",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-exercise-substitution-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 16
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Workout completion",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-workout-completion-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 3
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "History",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-history-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 15
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Exercise progress",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-exercise-progress-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 7
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Programme editor",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-programme-editor-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 30
+      }
+    },
+    {
+      "direction": "Tempo Ledger",
+      "screen": "Active workout",
+      "device": "Pixel 10",
+      "file": "evidence/2026-08-06/screens/tempo-ledger-active-workout-pixel-10-light.png",
+      "audit": {
+        "viewport": {
+          "width": 427,
+          "height": 952
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 17
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Onboarding",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-onboarding-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 8
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Programme selection",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-programme-selection-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 5
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Today",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-today-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 7
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Active workout",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-active-workout-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 22
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Set entry",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-set-entry-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 14
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Exercise substitution",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-exercise-substitution-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 14
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Workout completion",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-workout-completion-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 3
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "History",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-history-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 13
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Exercise progress",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-exercise-progress-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 5
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Programme editor",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/field-kit-programme-editor-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 28
+      }
+    },
+    {
+      "direction": "Field Kit",
+      "screen": "Active workout",
+      "device": "Pixel 10",
+      "file": "evidence/2026-08-06/screens/field-kit-active-workout-pixel-10-light.png",
+      "audit": {
+        "viewport": {
+          "width": 427,
+          "height": 952
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 22
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Onboarding",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-onboarding-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 8
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Programme selection",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-programme-selection-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 5
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Today",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-today-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 7
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Active workout",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-active-workout-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 21
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Set entry",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-set-entry-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 14
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Exercise substitution",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-exercise-substitution-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 14
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Workout completion",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-workout-completion-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 3
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "History",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-history-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 13
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Exercise progress",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-exercise-progress-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 5
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Programme editor",
+      "device": "iPhone",
+      "file": "evidence/2026-08-06/screens/open-pace-programme-editor-iphone-light.png",
+      "audit": {
+        "viewport": {
+          "width": 393,
+          "height": 852
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 28
+      }
+    },
+    {
+      "direction": "Open Pace",
+      "screen": "Active workout",
+      "device": "Pixel 10",
+      "file": "evidence/2026-08-06/screens/open-pace-active-workout-pixel-10-light.png",
+      "audit": {
+        "viewport": {
+          "width": 427,
+          "height": 952
+        },
+        "horizontalOverflow": false,
+        "undersizedControls": [],
+        "controlCount": 21
+      }
+    }
+  ],
+  "runtimeErrors": []
+}

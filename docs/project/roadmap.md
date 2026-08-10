@@ -24,7 +24,7 @@ Build the smallest production-grade vertical slice that proves the expensive fou
 
 Add approved programme creation/editing, fixed scheduling, custom exercises, warm-up and advanced set types, substitutions, short-workout mode, history, useful exercise progress, editable completion, personal records, explainable progression, settings, complete export, and deletion controls.
 
-**Exit evidence:** all MVP requirement IDs and domain cases pass; large text, screen reader, reduced motion, offline, long-history, and device-size matrices pass; no P0–P2 visual or accessibility findings.
+**Exit evidence:** all MVP requirement IDs and all MVP-applicable domain cases pass; scenarios explicitly tagged POST or FUTURE remain non-blocking until their phase. Large text, screen reader, reduced motion, offline, long-history, and device-size matrices pass; no P0–P2 visual or accessibility findings.
 
 ## Gate 3 — Private product validation
 

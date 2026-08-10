@@ -20,11 +20,13 @@ These are the only decisions requested at this milestone:
 
 1. Which visual direction should become the base system?
 2. Which specific elements, if any, should be combined from the other two directions?
-3. Is the proposed MVP boundary acceptable?
+3. Is the proposed MVP boundary, including the critical journeys in [`../product/user-journeys.md`](../product/user-journeys.md), acceptable?
 4. Is the recommended architecture acceptable?
 5. Should any feature be added, removed, or deferred?
 6. Does the product feel broad enough for mainstream gym users?
 7. Does any part feel generic, cluttered, or unnecessarily complicated?
+
+A “yes” to item 3 records approval of both the MVP boundary and the documented critical journeys. If either needs rework, the owner should name the affected feature or journey instead of approving item 3.
 
 ## Questions intentionally deferred until after direction approval
 
@@ -39,7 +41,7 @@ These are the only decisions requested at this milestone:
 ## Environment constraints and resolutions recorded during this milestone
 
 - The configured workspace initially had no checkout and its filesystem policy denied creating `.git`; the canonical clone, branch, commit, push, and PR steps require a writable Git metadata directory.
-- Registry DNS and dependency access initially failed, then recovered. A clean install from the committed npm lockfile, protected-runtime check, TypeScript/build, 15 browser tests, four Sites tests and 33-state mobile capture subsequently passed; the earlier prototype evidence blocker is closed.
+- Registry DNS and dependency access initially failed, then recovered. After the final adversarial source rework, the current production build, 28 protected-runtime checks, 32 browser/runtime/product cases, four Sites cases and a 33-state capture at `2026-08-10T03:34:06.468Z` passed. The capture reports zero runtime errors, horizontal-overflow states or rendered controls below 48×48.
 - Repository workflow discovery could not be enabled: `mkdir -p .agents/skills` failed with `mkdir: .agents: Operation not permitted`. The top-level `skills/` packages are therefore manual Skill-format workflows, not auto-discovered repository Skills; copying/installing them is deferred to a writable checkout.
 
-The remaining workspace constraints do not change the product or architecture recommendation. Local Git metadata and automatic repository-workflow discovery remain unavailable here; repository publication is handled through the authenticated GitHub connector and must still be verified explicitly.
+The remaining workspace constraints do not change the product or architecture recommendation. Local Git metadata and automatic repository-workflow discovery remain unavailable here; repository publication is handled through the authenticated GitHub connector and must still be verified explicitly. Product-owner direction review can use the current-source executable and visual evidence. The foundation definition-of-done gate remains pending the final independent Ultra audit and owner decisions.
