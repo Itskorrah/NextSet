@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "NextSet",
+    "slug": "nextset",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.nextset.app"
+    },
+    "android": {
+      "package": "com.nextset.app"
+    },
+    "plugins": ["expo-sqlite"]
+  }
+}

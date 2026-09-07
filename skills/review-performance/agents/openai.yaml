@@ -1,0 +1,4 @@
+interface:
+  display_name: "Performance Review"
+  short_description: "Check NextSet against mobile performance budgets"
+  default_prompt: "Use $review-performance to review a NextSet change against its performance budgets."

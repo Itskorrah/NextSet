@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mobile End-to-End Testing"
+  short_description: "Verify critical mobile journeys end to end"
+  default_prompt: "Use $run-mobile-e2e to verify an approved NextSet mobile journey on target devices."

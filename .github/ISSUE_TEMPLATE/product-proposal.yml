@@ -1,0 +1,38 @@
+name: Product proposal
+description: Propose a requirement or scope change grounded in a user problem
+title: "[Proposal]: "
+labels: ["product", "needs-evidence"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Who experiences this, in what context, and what are they unable to do?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and uncertainty
+      description: Link research; distinguish documented behaviour, user report, observation, and inference.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Expected outcome and measurement
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Proposed phase
+      options: ["Product foundation", "MVP", "Post-MVP", "Future exploration", "Unsure"]
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Dependencies, risks, exclusions, and simpler alternatives
+    validations:
+      required: true

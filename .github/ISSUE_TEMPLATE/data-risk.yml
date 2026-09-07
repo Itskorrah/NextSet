@@ -1,0 +1,34 @@
+name: Data integrity or migration risk
+description: Escalate possible workout-history loss, corruption, duplication, or unsafe migration
+title: "[Data risk]: "
+labels: ["data-integrity", "priority-review"]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not uninstall the app, clear storage, or overwrite the affected database. Remove private data before attaching evidence."
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed risk
+      description: Describe missing, duplicated, changed, or inaccessible data and when it was last known correct.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Build and data state
+      description: Build/schema version, device/OS, upgrade path, network/sync state, history size, units, and available backup/export.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Exact reproduction and recovery attempts
+      description: Include only non-destructive attempts already made.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitised evidence
+      description: Logs, invariant counts, export diff, migration trace, and backup metadata.
