@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { deriveProgress, progressDescription } from '../src/domain/progress.ts';
-import type { WorkoutRecord } from '../src/domain/models.ts';
+import { formatLoad, loadToGrams, type WorkoutRecord } from '../src/domain/models.ts';
+import { validateSetInput } from '../src/domain/setValidation.ts';
 
 const completedWorkout: WorkoutRecord = {
   id: 'workout-1', title: 'Workout', source: 'blank', status: 'completed', startedAt: 1, completedAt: 2,
@@ -18,6 +19,7 @@ test('progress combines repeated exercise entries only across separate completed
   assert.equal(progress[0].sessions, 2);
   assert.equal(progress[0].bestLoadGrams, 70000);
   assert.equal(progressDescription(progress[0]), '2 recorded sessions · heaviest recorded set 70 kg');
+  assert.equal(progressDescription(progress[0], 'lb'), '2 recorded sessions · heaviest recorded set 154.3 lb');
 });
 
 test('active workouts cannot create a progress record', () => {
@@ -50,4 +52,39 @@ test('timed and bodyweight records never invent a load', () => {
   const progress = deriveProgress([workout, secondWorkout]);
   assert.equal(progress.find((item) => item.name === 'Plank')?.bestLoadGrams, null);
   assert.equal(progress.find((item) => item.name === 'Push-up')?.bestLoadGrams, null);
+});
+
+test('unit preferences convert display and input without changing canonical grams', () => {
+  const grams = loadToGrams(135, 'lb');
+  assert.equal(grams, 61235);
+  assert.equal(formatLoad(grams, 'lb'), '135 lb');
+  assert.equal(formatLoad(grams, 'kg'), '61.2 kg');
+});
+
+test('validates complete, safely storable set values', () => {
+  assert.deepEqual(
+    validateSetInput('weight', { reps: 8, load: 135, loadUnit: 'lb' }),
+    { reps: 8, loadGrams: 61235, durationSeconds: null },
+  );
+  assert.deepEqual(
+    validateSetInput('bodyweight', { reps: 12 }),
+    { reps: 12, loadGrams: null, durationSeconds: null },
+  );
+  assert.deepEqual(
+    validateSetInput('time', { seconds: 45 }),
+    { reps: null, loadGrams: null, durationSeconds: 45 },
+  );
+
+  assert.throws(
+    () => validateSetInput('weight', { reps: 5.5, load: 20 }),
+    /whole-number reps/,
+  );
+  assert.throws(
+    () => validateSetInput('weight', { reps: 8 }),
+    /valid load/,
+  );
+  assert.throws(
+    () => validateSetInput('time', { seconds: 30.5 }),
+    /whole-number seconds/,
+  );
 });
