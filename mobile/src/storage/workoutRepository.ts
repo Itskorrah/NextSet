@@ -60,6 +60,10 @@ async function database(): Promise<SQLite.SQLiteDatabase> {
         key TEXT PRIMARY KEY NOT NULL,
         value TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS workout_name_options (
+        name TEXT PRIMARY KEY NOT NULL COLLATE NOCASE,
+        last_used_at INTEGER NOT NULL
+      );
       CREATE TABLE IF NOT EXISTS workout_audit (
         id TEXT PRIMARY KEY NOT NULL,
         workout_id TEXT NOT NULL,
@@ -122,6 +126,12 @@ export const workoutRepository = {
     });
   },
 
+  async workoutNameOptions(): Promise<string[]> {
+    const db = await database();
+    const rows = await db.getAllAsync<{ name: string }>('SELECT name FROM workout_name_options ORDER BY last_used_at DESC, name ASC LIMIT 8');
+    return rows.map((row) => row.name);
+  },
+
   async active(): Promise<WorkoutRecord | null> {
     const db = await database();
     const row = await db.getFirstAsync<WorkoutRow>('SELECT id, title, source, status, started_at as startedAt, completed_at as completedAt FROM workouts WHERE status = \'active\' LIMIT 1');
@@ -134,7 +144,7 @@ export const workoutRepository = {
     return Promise.all(rows.map(hydrateWorkout));
   },
 
-  async start(source: WorkoutRecord['source'] = 'blank', exercises: Array<Pick<ExerciseRecord, 'definitionKey' | 'name' | 'mode'>> = []): Promise<void> {
+  async start(source: WorkoutRecord['source'] = 'blank', exercises: Array<Pick<ExerciseRecord, 'definitionKey' | 'name' | 'mode'>> = [], title = 'Workout'): Promise<void> {
     await serialWrite(async () => {
       const db = await database();
       await db.withTransactionAsync(async () => {
@@ -142,7 +152,7 @@ export const workoutRepository = {
         if (active) return;
         const workoutId = makeId();
         const now = Date.now();
-        await db.runAsync('INSERT INTO workouts (id, title, source, status, started_at) VALUES (?, ?, ?, \'active\', ?)', workoutId, 'Workout', source, now);
+        await db.runAsync('INSERT INTO workouts (id, title, source, status, started_at) VALUES (?, ?, ?, \'active\', ?)', workoutId, title, source, now);
         for (const [position, exercise] of exercises.entries()) {
           await db.runAsync('INSERT INTO exercises (id, workout_id, definition_key, name, mode, position) VALUES (?, ?, ?, ?, ?, ?)', makeId(), workoutId, exercise.definitionKey, exercise.name, exercise.mode, position);
         }
@@ -193,6 +203,7 @@ export const workoutRepository = {
         const workout = await db.getFirstAsync<{ id: string; title: string }>('SELECT id, title FROM workouts WHERE id = ?', workoutId);
         if (!workout) throw new Error('This workout no longer exists.');
         await db.runAsync('UPDATE workouts SET title = ? WHERE id = ?', trimmed, workoutId);
+        await db.runAsync('INSERT INTO workout_name_options (name, last_used_at) VALUES (?, ?) ON CONFLICT(name) DO UPDATE SET last_used_at = excluded.last_used_at', trimmed, Date.now());
         await db.runAsync('INSERT INTO workout_audit (id, workout_id, event_type, payload_json, created_at) VALUES (?, ?, ?, ?, ?)', makeId(), workoutId, 'workout_renamed', JSON.stringify({ before: workout.title, after: trimmed }), Date.now());
       });
     });
@@ -256,7 +267,7 @@ export const workoutRepository = {
   },
 
   async repeat(workout: WorkoutRecord): Promise<void> {
-    await this.start('repeat', workout.exercises.map(({ definitionKey, name, mode }) => ({ definitionKey, name, mode })));
+    await this.start('repeat', workout.exercises.map(({ definitionKey, name, mode }) => ({ definitionKey, name, mode })), workout.title);
   },
 
   async saveRoutine(workout: WorkoutRecord): Promise<void> {
@@ -299,7 +310,7 @@ export const workoutRepository = {
   },
 
   async startRoutine(routine: RoutineRecord): Promise<void> {
-    await this.start('routine', routine.exercises);
+    await this.start('routine', routine.exercises, routine.name);
   },
 
   async progress(): Promise<ProgressRecord[]> {
