@@ -1,141 +1,115 @@
 # NextSet information architecture
 
-Status: foundation proposal for product-owner approval  
-Date: 2026-08-06  
-Scope: mobile-phone information model and navigation; visual navigation treatment remains direction-dependent
+Status: logging-first foundation proposal; scope accepted in `D-009`, detailed navigation awaits owner review  
+Updated: 2026-09-07  
+Scope: phone navigation and information hierarchy; Tempo Ledger is the proposed base
 
 ## Organising idea
 
-NextSet has two modes with different attention needs:
+NextSet opens around recording a workout. People can use it indefinitely without choosing a goal, routine, programme, schedule or guidance mode. Repeating history and saving routines are optional shortcuts. “Journeys” are internal interaction specifications, never a user-facing setup choice.
 
-- **Plan and review:** choose what to do, maintain programmes and understand history.
-- **Train:** resume a single interruption-sensitive active workout and record what happened.
-
-The active workout is a durable task layer, not merely another tab page. It can be left without being discarded, survives process interruption, and is always the first resume destination while active.
+The active workout is a recoverable task that remains reachable while viewing history or routines. In future production, it is durable and locally transactional. The disposable browser prototype must label its actual session/persistence limitations; it does not prove native restoration.
 
 ## Content model
 
-| User-facing object | Primary question | Canonical relationship |
+| Object | User question | Relationship and scope |
 |---|---|---|
-| Today | What is next and how do I start? | Summarises active workout or next planned occurrence; contains no independent analytics feed |
-| Programme | What sequence or schedule am I following? | User-owned versioned definition containing workout templates |
-| Workout template | What is normally planned in this session? | Ordered exercises, targets, groups, rest and optional progression rules |
-| Planned occurrence | When/what is expected next? | Fixed-date or flexible-sequence instance pointing to a programme version |
-| Active workout | What am I doing now? | Durable session snapshot with committed sets, draft context and timer state |
-| Completed workout | What actually happened? | Immutable completion plus auditable later revisions |
-| Exercise | What movement am I recording? | Stable catalogue/custom identity with variation, equipment and measurement metadata |
-| Exercise performance | How did this exercise go in one session? | Links the planned and actual exercise identities and contains ordered sets |
-| Set | What did I record? | Planned target plus observed values, set semantics, completion and revision provenance |
-| History | What have I recorded? | Chronological workouts and exercise-specific drill-down |
-| Progress view | What changed for a defined question? | Derived, comparable result plus source list/table and calculation explanation |
-| Recommendation | What could I change next and why? | Versioned proposal; no plan mutation until accepted |
+| Workouts | How do I start or continue? | Start workout or Continue workout; recent repeat and optional routines are secondary |
+| Routine | What do I often do? | User-owned ordered exercises with optional set/rest targets and notes; no dates, sequence, goal or enrolment |
+| Active workout | What am I recording now? | Independent session with stable ID, exercises, draft/recorded sets, notes and timer state; source routine/workout is optional |
+| Completed workout | What happened? | A completed session plus auditable later revisions; only observed completed sets enter performance results |
+| Exercise | What am I recording? | Stable identity, variation, equipment and measurement/load/laterality semantics |
+| Set | What did I do? | Actual measurement, units, role and completion; copied targets and previous values are separate reference data |
+| History | What have I recorded? | Chronological sessions and their source sets; edits and repeat are available from detail |
+| Progress | What has changed? | Descriptive frequency, comparable exercise observations and observed personal bests with record provenance |
 
-The complete persistence semantics live in [`../architecture/data-model.md`](../architecture/data-model.md). Visual labels must not collapse distinct objects merely to simplify a prototype.
+Programme, planned occurrence, schedule cursor, carry-forward disposition and recommendation are POST objects. They must not become mandatory foreign keys or user choices for this hierarchy. Existing [`../architecture/data-model.md`](../architecture/data-model.md) contains broader reference semantics; its current scope boundary must preserve independent sessions/routines before production.
 
 ## Destination hierarchy
 
 ```text
 NextSet
-├── Today
-│   ├── Continue active workout
-│   ├── Next planned workout
-│   ├── Start expected workout
-│   ├── Start unscheduled workout
-│   └── Resolve move / skip / repeat / reschedule
-├── Train (durable task layer)
-│   ├── Workout overview and exercise order
-│   ├── Current exercise
-│   │   ├── Set entry and edit
-│   │   ├── Rest timer
-│   │   ├── Notes and comparable history
-│   │   └── Exercise substitution
-│   ├── Add / reorder / short-workout adaptation
-│   └── Finish / partial completion / recovery
-├── History and progress
-│   ├── Workout list and calendar
-│   ├── Completed-workout detail and edit
-│   ├── Exercise history
-│   ├── Comparable records
-│   └── Question-led charts with data alternative
-├── Programmes
-│   ├── Templates and previews
-│   ├── User programmes and versions
-│   ├── Workout editor
-│   ├── Exercise library and custom exercises
-│   └── Scheduling and progression rules
-└── Settings and data
-    ├── Units and accessibility preferences
-    ├── Timer, guidance and celebration preferences
-    ├── Export
-    ├── Local data deletion
-    └── Licences, privacy and support
+├── Workouts (first launch and normal home)
+│   ├── Start workout → empty active session → Add exercise
+│   ├── Continue active workout (replaces Start when active)
+│   ├── Repeat a recent completed workout
+│   └── Routines
+│       ├── Preview / Start routine
+│       └── Create / Edit routine
+├── Active workout (reachable task layer)
+│   ├── Add / remove / reorder exercises
+│   ├── Log / edit / remove sets
+│   ├── Comparable previous values and optional notes
+│   ├── Non-blocking rest timer
+│   └── Finish with the work recorded / explicit discard
+├── History
+│   ├── Completed-workout list
+│   └── Workout detail → Edit / Repeat / Save as routine
+├── Progress
+│   ├── Workout frequency
+│   ├── Exercise history and comparable performance
+│   └── Observed personal bests and source sets
+└── Settings (secondary entry)
+    ├── Units, accessibility and timer preferences
+    ├── Export / scoped local-data deletion
+    └── Privacy, licences and support
 ```
 
-This is the semantic hierarchy. The number and arrangement of visible bottom destinations varies meaningfully among Tempo Ledger, Field Kit and Open Pace; see [`visual-directions.md`](visual-directions.md). Every direction must still provide a stable, labelled path to each branch.
+Proposed persistent navigation has three labelled destinations: **Workouts, History, Progress**. Routines live under Workouts; settings stay secondary. Keep these destinations stable when history is empty. There is no Today schedule dashboard, Programme tab, goal wizard or deferred-feature placeholder. Final treatment remains subject to prototype review, large-text/accessibility verification and owner approval.
 
 ## Navigation rules
 
-1. **Resume beats start.** When an active workout exists, Continue is the dominant Today action and the Train destination opens that workout.
-2. **Global navigation never destroys a session.** Leaving Train preserves committed state and disclosed draft behaviour. Finishing and abandoning are explicit verbs.
-3. **Context does not mutate scope.** Viewing history, a note or a substitution candidate during training does not end the timer or change the programme.
-4. **Sheets are for bounded choices.** Set type, exercise options, timer adjustment and “today or future” scope may use a sheet. Multi-step programme editing, history and substitution search use full screens.
-5. **Gestures accelerate only.** Swipe and drag have visible button/menu equivalents. Reorder provides Move up/down accessibility actions.
-6. **Back is recoverable.** A dirty set draft is retained or receives a clear Save/Discard/Keep editing choice. Back never silently erases input.
-7. **Deep links are state-aware.** A future notification or live surface returns to the current workout; it cannot create another session.
-8. **No dead destinations.** Deferred features have no placeholder tab or inactive control.
+1. **Continue takes precedence.** An active workout replaces the dominant Start action. Any repeat/routine start attempt must resolve the existing session and cannot silently create a second one.
+2. **Leaving preserves work.** Tabs, back and history previews preserve committed session values. Dirty fields are retained or present an explicit save/discard/keep-editing choice.
+3. **Use visible, plain actions.** Add exercise, Log set, Finish workout, Repeat workout and Save as routine identify their effect. No schedule/version terminology belongs in normal logging.
+4. **Keep optional work contextual.** Routine creation and settings never interrupt first start or finishing. Finishing needs no goal, next-workout, carry-forward or recommendation decision.
+5. **Use sheets for bounded choices.** Exercise options, set detail and timer adjustment may use dismissible sheets. Search, full workout history and routine editing can use full screens with clear back labels and focus restoration.
+6. **Gestures are shortcuts.** Drag/swipe must have visible accessible alternatives. No critical action relies solely on a gesture, colour or haptic.
+7. **Respect platform use.** Preserve iOS safe-area insets, familiar labelled navigation/back behaviour, at least 48×48 logical-pixel critical targets, scalable text, accessible focus and reduced motion. Apply these design principles to the proposed React Native stack; they do not authorise a SwiftUI rewrite.
+8. **Do not imply unimplemented features.** The prototype describes its actual save scope and supported modes; future production-only settings are documentation contracts, not dead controls.
 
-## Ten required review screens
+## Required current review states
 
-| Screen | User intention and primary action | Required information | Recovery and alternate paths |
-|---|---|---|---|
-| 1. Onboarding | Reach a useful plan without an account | Units, optional goal, experience description, schedule preference and accessibility-relevant choices | Skip/resume; explain that goals tune suggestions but do not lock features |
-| 2. Programme selection or creation | Adopt a suitable start or build one | Template purpose, level, duration provenance, equipment assumptions, schedule mode and progression summary | Preview before adopt; custom programme path; no template silently mutates after adoption |
-| 3. Today | Identify and start/continue what is next | Active status, next workout/focus, last workout, duration if known, schedule context and offline readiness | Start expected, start unscheduled, move/skip/repeat/reschedule, or resolve unfinished workout |
-| 4. Active workout | See current position and log the next set | Exercise order, current exercise, previous comparable result, planned target, actual sets, progress, notes, timer and local-save state | Leave/resume, reorder, add, substitute, short mode, finish partial or finish complete |
-| 5. Set entry | Record or correct one set accurately | Set position/type, load/measurement mode, reps/time, optional effort, previous/planned context and unit | Direct entry plus stepper; cancel preserves prior committed value; commit failure retains draft |
-| 6. Exercise substitution | Replace unavailable/undesired work while preserving intent | Original exercise, reason optional, match factors, mismatches, actual-exercise history and change scope | Search, custom exercise, skip, choose today only, or separately change future programme |
-| 7. Workout completion | Confirm durable completion and choose a useful next step | Saved-on-device state, completed/skipped/not-attempted work, meaningful comparable records, optional note and next occurrence | Idempotent retry, return to Today/history, handle partial/carry-forward choice without guilt |
-| 8. History | Find a workout or exercise record | Chronological list/calendar, filters, completion state, short/partial labels and search | Empty history starts a workout; failed read exposes recovery rather than an empty reset |
-| 9. Exercise progress | Answer one explicit progress question | Exercise variation, date range, unit, comparable observations, summary, estimate labels and underlying records | Insufficient-data explanation, range change, raw history, accessible table/list |
-| 10. Programme editor | Adjust future training without rewriting history | Version scope, workout order, exercises, targets, rest, groups, schedule and progression rules | Validate without clearing input; preview effect; publish new version; cancel leaves current version active |
+| State | Primary action | Essential information / recovery |
+|---|---|---|
+| First-use Workouts | Start workout | No sample “next” session or setup gate; optional routines secondary |
+| Blank active workout | Add exercise | No silently seeded exercises, targets or completed sets; empty state explains the next action |
+| Exercise selection | Add selected exercise | Search/select with clear identity and supported measurement mode; cancel preserves session |
+| Set entry | Log set | Unit, measurement, optional previous reference; errors retain input and do not record a set |
+| Active workout with records | Log next set / Finish | Recorded versus draft values distinct; editing accessible; timer does not cover actions |
+| Finish | Save completed workout | Only observed work counted; incomplete targets do not become performed sets; no carry-forward choice |
+| Empty History / Progress | Start workout | Why empty, how records will help, no fake charts or zeroed sample performance |
+| One recorded session | View source workout | Show actual observations and “record another comparable session” before claiming an improvement trend |
+| Repeat | Start new workout | Explicit source reference, new session, all completion flags cleared; source history unchanged |
+| Routine preview/editor | Start / Save routine | Optional exercise/set/rest definition with no schedule; edits affect future starts only |
+| History detail and edit | Edit / Repeat | Original record and correction provenance; recompute derived views after save |
+| Progress with comparisons | Inspect exercise / source sets | Identity, unit, dates/range, inclusion rules, observed values and accessible text/list alternative |
 
 ## Active-workout task structure
 
-The default reading and focus order is:
+Reading and focus order follows the task: workout/exercise name, comparable previous context if present, current set fields, Log set, recorded sets/edit actions, optional notes/timer, exercise and finish actions. Do not add a planned denominator to a blank workout. A routine can show optional targets, but logging beyond them remains possible.
 
-1. workout and exercise position;
-2. exercise name and target;
-3. rest-timer summary and controls when running;
-4. previous comparable performance;
-5. current and completed set list;
-6. current set editor/complete action;
-7. notes and exercise options;
-8. workout-level actions.
+At large text, set rows reflow into vertical summaries without horizontal scrolling, smaller type or hidden actions. Screen-reader users can navigate headings for Current exercise, Set entry, Recorded sets, Timer and Workout actions. Focus returns predictably after sheets, edits and exercise selection.
 
-At large text, a four-column set row becomes a vertical set summary. It does not introduce horizontal scrolling or reduce type. A screen-reader user can navigate by headings to Current set, Timer, Sets, Notes and Workout actions; completed rows are coherent groups rather than four unrelated focus stops.
+## Meaningful progress states and rules
 
-## States that must exist in the architecture
+- **Workout frequency:** count completed sessions containing at least one recorded eligible set in the displayed local-date range. Empty/abandoned/draft sessions are excluded. This describes recorded workouts, not adherence, health or a recommendation to train more.
+- **Comparable exercise performance:** group by exercise variant and matching measurement/load/laterality semantics. Show units, dates and underlying sets. Unit conversion preserves canonical meaning; different variants or assistance levels cannot become a misleading continuous “strength” series.
+- **Observed personal bests:** use the approved `PRD-FR-026` categories and eligible source sets. Do not imply an estimated 1RM, cross-exercise score or causal fitness improvement. No eligible data means an explanation, not a fabricated best.
+- **Insufficient history:** zero sessions offer Start workout; one comparable session shows that observation and explains why change cannot yet be assessed. Unknown/missing values remain unknown, never zero-filled.
+- **Corrections:** after an edit/delete, invalidate/recompute affected counts, series and bests; stale results are hidden or clearly pending. A chart always has an accessible equivalent and source drill-down.
 
-| State | Presentation requirement | Forbidden shortcut |
+## Failure and data states
+
+| State | Required presentation | Forbidden shortcut |
 |---|---|---|
-| Loading local data | Fast, labelled and non-blocking; retain last committed content where safe | Indefinite network spinner |
-| Empty | Explain why and offer one relevant action | Marketing carousel or fake analytics |
-| Offline | State that core work is available locally; identify only genuinely unavailable future service | Red error banner for normal offline use |
-| Draft not committed | Distinct from saved set; preserve during recoverable navigation | Showing a completed check before commit |
-| Saved locally | Brief visible/semantic acknowledgement | Conflating with future sync |
-| Save failed | Retain values, explain what failed and offer retry/recovery | Clearing the form or playing success haptic |
-| Resting | Glanceable remaining time with pause/adjust/dismiss | Full-screen countdown that blocks logging |
-| Interrupted workout | Continue is dominant with elapsed/restored context | Starting another hidden active session |
-| Insufficient progress data | State how many comparable observations are needed and show raw history | Zeroed or fabricated chart |
-| Corrupt/unreadable data | Quarantine, explain and offer last verified revision/export path | Silent reset to an empty account |
-
-## Search and filtering
-
-- Exercise search ranks recent and favourite items before a full catalogue, supports aliases, and exposes equipment/movement filters.
-- Substitution search is scoped to the original exercise intent but never labels heuristic similarity as safety or equivalence.
-- History search covers workout name, exercise and user note locally; private notes are not used for telemetry or recommendations.
-- Filters persist only when the user deliberately saves a preference. A hidden stale filter must not make history appear lost.
+| Local loading | Labelled, brief and recoverable | Network spinner blocking offline logging |
+| Draft versus recorded | Explicit recorded state after successful commit only | Checkmark or frequency increment before save |
+| Save failed | Retain values, say what was not saved, offer retry | Clearing input or claiming success |
+| Interrupted session | Continue with latest committed values | Silently starting an empty replacement |
+| No results in range | Explain filter/date range and offer change | Pretending history is lost |
+| Corrupt/unreadable data | Preserve source and expose truthful recovery/export path | Silent reset to empty history |
 
 ## Foundation validation
 
-The IA is ready for owner review when each required journey in the future [`../product/user-journeys.md`](../product/user-journeys.md) maps to a stable entry, success state, failure state and recovery path here. The link may be unresolved while that concurrently owned deliverable is still being prepared; its absence is a foundation blocker, not permission to invent a different flow.
+The revised [`../product/user-journeys.md`](../product/user-journeys.md) must map to reachable entries, outcomes and recovery paths here. Prototype QA verifies the supported browser interactions and its stated limitations. Native transaction/restoration, device accessibility and full release gates remain future evidence requirements. Final direction/journey/architecture approval remains separate from accepted logging-first scope.

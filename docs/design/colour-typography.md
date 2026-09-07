@@ -180,7 +180,7 @@ Sizes are initial logical-point/sp targets. Platform text styles and user scalin
 | Timer | 28 / 32 | Remaining rest time with tabular numerals |
 | Button | 16 / 20 | Action label; semibold/bold, never ultra-condensed for sentences |
 
-No role below 12 logical units is approved for user-facing content. Actual minimums are validated by physical-device legibility and platform accessibility settings, not frozen by this table.
+No proposed role below 12 logical units may be used for user-facing content. Actual minimums are validated by physical-device legibility and platform accessibility settings, not frozen by this table.
 
 ## Direction type studies
 

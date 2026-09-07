@@ -1,0 +1,161 @@
+{
+  "capturedAt": "2026-09-07T12:16:50.716Z",
+  "context": "Chromium automated prototype evidence; iPhone 393×852 and Pixel 427×952 presets; light; reduced motion; large-text = 200% app base font, not native Dynamic Type",
+  "sourceHashes": {
+    "src/Prototype.tsx": "dfd4e6c5b4f4030f9c7490a13d2b36d29d2388fe6d729437f55b90b67e0e76e6",
+    "src/prototype.css": "fb2a915cc4e518bb9b038a5b2bc5ee8669750bc18c405d657e4852884de9a181"
+  },
+  "runtimeErrors": [],
+  "records": [
+    {
+      "state": "workouts-empty",
+      "file": "workouts-empty.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "history-empty",
+      "file": "history-empty.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "progress-empty",
+      "file": "progress-empty.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "active-empty",
+      "file": "active-empty.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "exercise-picker",
+      "file": "exercise-picker.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "active-recorded",
+      "file": "active-recorded.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "set-entry",
+      "file": "set-entry.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "partial-finish",
+      "file": "partial-finish.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "workout-detail",
+      "file": "workout-detail.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "routine",
+      "file": "routine.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "history",
+      "file": "history.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "progress",
+      "file": "progress.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "progress-observations",
+      "file": "progress-observations.png",
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "pixel-active",
+      "file": "pixel-active.png",
+      "viewport": {
+        "width": 427,
+        "height": 952
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    },
+    {
+      "state": "large-text",
+      "file": "large-text.png",
+      "viewport": {
+        "width": 427,
+        "height": 952
+      },
+      "horizontalOverflow": false,
+      "undersizedControls": []
+    }
+  ]
+}

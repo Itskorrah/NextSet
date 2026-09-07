@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import struct
@@ -61,6 +62,9 @@ REQUIRED = [
     "docs/quality/performance-budgets.md",
     "docs/quality/release-readiness.md",
     "docs/quality/independent-review.md",
+    "docs/quality/logging-first-independent-review.md",
+    "prototypes/nextset-directions/evidence/2026-09-07-logging-first/manifest.json",
+    "prototypes/nextset-directions/evidence/2026-09-07-logging-first/command-results.md",
     "docs/agents/operating-model.md",
     "docs/agents/ownership-review-rework.md",
     "docs/agents/worktree-branch-strategy.md",
@@ -202,9 +206,9 @@ def main() -> int:
     if "final result: pass" not in design_qa.lower():
         errors.append("design-qa.md does not record an exact passing final result")
 
-    independent_review = (ROOT / "docs/quality/independent-review.md").read_text(encoding="utf-8")
+    independent_review = (ROOT / "docs/quality/logging-first-independent-review.md").read_text(encoding="utf-8")
     if "final gate result: pass" not in independent_review.lower():
-        errors.append("independent-review.md does not record an exact passing final gate")
+        errors.append("logging-first-independent-review.md does not record an exact passing final gate")
 
     evidence_dir = ROOT / "prototypes/nextset-directions/evidence/2026-08-06"
     for direction in DIRECTIONS:
@@ -240,6 +244,31 @@ def main() -> int:
                 errors.append(f"undersized controls in capture manifest: {record.get('file', 'unknown')}")
     except (OSError, json.JSONDecodeError) as exc:
         errors.append(f"invalid capture manifest: {exc}")
+
+    # The three-direction package above is historical evidence. Validate current
+    # logging-first captures separately, including exact source hashes.
+    current_dir = ROOT / "prototypes/nextset-directions/evidence/2026-09-07-logging-first"
+    try:
+        current = json.loads((current_dir / "manifest.json").read_text(encoding="utf-8"))
+        required_states = {"workouts-empty", "active-empty", "exercise-picker", "active-recorded", "history", "routine", "progress", "pixel-active", "large-text"}
+        records = current.get("records", [])
+        captured_states = {record.get("state") for record in records}
+        for missing in sorted(required_states - captured_states):
+            errors.append(f"missing current logging-first state: {missing}")
+        for record in records:
+            capture = current_dir / record["file"]
+            if not capture.is_file() or capture.stat().st_size == 0:
+                errors.append(f"missing logging-first screenshot: {record['file']}")
+            if record.get("horizontalOverflow") or record.get("undersizedControls"):
+                errors.append(f"logging-first layout defect: {record['state']}")
+        if current.get("runtimeErrors"):
+            errors.append("logging-first capture has runtime errors")
+        for source in ("src/Prototype.tsx", "src/prototype.css"):
+            actual = hashlib.sha256((ROOT / "prototypes/nextset-directions" / source).read_bytes()).hexdigest()
+            if current.get("sourceHashes", {}).get(source) != actual:
+                errors.append(f"logging-first captures are stale for {source}")
+    except (OSError, KeyError, json.JSONDecodeError) as exc:
+        errors.append(f"invalid logging-first manifest: {exc}")
 
     if errors:
         print("Foundation validation FAILED")

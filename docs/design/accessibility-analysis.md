@@ -111,7 +111,7 @@ Reference: [`../../prototypes/visual-references/tempo-ledger-active-workout.png`
 
 | Risk seen in the flattened image | Required design response |
 |---|---|
-| Small uppercase/monospaced labels and footnote copy | Use the approved Label/Caption roles, test at physical size, allow wrapping and keep essential instructions at Body size |
+| Small uppercase/monospaced labels and footnote copy | Use the proposed Label/Caption roles, test at physical size, allow wrapping and keep essential instructions at Body size |
 | Thin grey rules and pale progress segments | Functional boundaries use the verified `line` token and non-colour state labels; decorative rules may remain lighter only when nonessential |
 | Dense four-column set table | Reflow to a labelled vertical row at 200% text; expose one coherent row summary and direct edit actions |
 | Five compact bottom destinations | Keep 48×48 target geometry, support long translations and test whether Exercises/Plans need a More grouping on minimum width |
@@ -225,7 +225,7 @@ Canvas-only charts without an equivalent semantic representation are not accepta
 | iOS oldest supported physical device | repeated workout and interruption restore | Device/OS, raw result and defects |
 | Android current + TalkBack | same full critical journey | Screen recording plus semantic/focus notes |
 | Android oldest supported physical device | repeated workout and restore | Device/OS and result |
-| 200% and largest approved text | all ten screens in both directions being considered | Screenshots/layout assertions; no hidden action/content |
+| 200% and the largest supported platform text size | all ten screens in both directions being considered | Screenshots/layout assertions; no hidden action/content |
 | Small iPhone-like 393×852 screen and Pixel-like 427×952 screen | keyboard, safe areas, scroll, sheets, nav and current-set action | Matched screenshots and target overlays |
 | Switch/external keyboard | navigation, set adjust/direct entry, reorder, sheet, destructive recovery | Action/focus trace |
 | Reduce Motion/remove animations + haptics off | log, timer, completion, PR, reorder | State trace proving equivalent feedback |

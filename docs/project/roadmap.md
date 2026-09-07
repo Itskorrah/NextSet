@@ -1,41 +1,44 @@
 # Outcome-based roadmap
 
-The roadmap is gated by evidence and owner decisions, not calendar promises.
+Updated: 2026-09-07. The roadmap follows the accepted logging-first scope (`D-009`) and is gated by evidence and owner decisions, not calendar promises.
 
 ## Gate 0 — Foundation approval (current)
 
-**Exit outcomes:** product promise, target users, MVP boundary, one visual direction, critical journeys, local-first architecture, workout rules, and quality gates are approved. Git and prototype execution blockers are resolved or accepted with a recovery plan.
+**Accepted:** a simple workout logger with optional routines, repeat, editable history and meaningful trends; earlier broad scheduling/guidance scope is deferred.
 
-## Gate 1 — Walking skeleton
+**Current work:** simplify the disposable Tempo Ledger prototype, reconcile product/domain/architecture scope, validate changed flows and obtain independent review. Demonstrate an empty first launch, a genuinely blank workout, recording/editing sets, repeat with completion state reset, optional routine creation/editing and history/trend empty states.
 
-Build the smallest production-grade vertical slice that proves the expensive foundations:
+**Exit outcomes:** owner approves the final visual direction, revised critical journeys and proposed architecture. Scope acceptance alone does not open the production gate. Current prototype limitations and review findings are explicit; no native durability or release-readiness claim comes from a browser prototype.
 
-- New local profile and measurement preference
-- Seed exercise selection
-- One programme template with flexible sequence
-- Today → start → record normal sets → interrupt/restore → complete offline
-- Versioned local schema, migrations, export skeleton, and durable transaction log
-- Design tokens and accessibility primitives from the chosen direction
-- Domain and restoration tests running in CI
+## Gate 1 — Dependable workout loop
 
-**Exit evidence:** no silent data loss across forced termination and migration fixtures; one deliberate action starts the expected workout; normal set logging meets the interaction budget.
+After Gate 0 approval, build the smallest production slice that proves a useful record:
 
-## Gate 2 — MVP breadth
+- Open Workouts without account, goal, programme or schedule setup; units are visible and editable.
+- Start an empty session, select exercises and record/edit ordinary sets.
+- Leave, lock, terminate and relaunch; restore exactly the latest committed work offline.
+- Finish without carry-forward decisions and find the saved workout in history.
+- Use stable IDs, versioned local schema, recoverable migrations and verified transaction boundaries.
+- Apply the selected design/accessibility primitives and prove screen-reader/large-text operation.
 
-Add approved programme creation/editing, fixed scheduling, custom exercises, warm-up and advanced set types, substitutions, short-workout mode, history, useful exercise progress, editable completion, personal records, explainable progression, settings, complete export, and deletion controls.
+**Exit evidence:** zero silent acknowledged loss in interruption/failure fixtures; blank start in one action; no duplicate active/completed workouts; ordinary set logging meets the interaction budget. Database and domain design must not require a programme or planned occurrence.
 
-**Exit evidence:** all MVP requirement IDs and all MVP-applicable domain cases pass; scenarios explicitly tagged POST or FUTURE remain non-blocking until their phase. Large text, screen reader, reduced motion, offline, long-history, and device-size matrices pass; no P0–P2 visual or accessibility findings.
+## Gate 2 — Reuse, correction and useful progress
+
+Add repeat of any completed workout, optional routine creation/editing/save-from-workout, approved custom exercise and measurement modes, standard/warm-up sets, a non-blocking timer, manual exercise changes, notes, auditable completed-workout editing, workout frequency, comparable exercise performance and observed personal bests. Finish complete export and scoped deletion before any release.
+
+**Exit evidence:** repeat copies no completion flags or current-session observations; routine edits preserve old snapshots; corrected/deleted data deterministically changes trends/PRs; empty and single-observation histories make no invented trend claim. Every visible control maps to the accepted scope. Accessibility, offline, restoration, export, device-size and long-history gates pass for all shipped flows.
 
 ## Gate 3 — Private product validation
 
-Run instrumented, consented testing with new, intermediate, experienced, and inconsistent-schedule users. Measure start clarity, set-entry time/error, programme recovery, substitution understanding, recommendation trust, restoration confidence, and retention without manipulative mechanics.
+Test with new, intermediate, experienced, general-fitness and inconsistent-schedule users. Include people who only log blank workouts, people who repeat history and people who choose routines. Measure first-action clarity, repeated set-entry errors/time, edit/reuse comprehension, trend interpretation and confidence in restoration. Use consented research; no telemetry is assumed.
 
-**Exit evidence:** success thresholds in the PRD are met or the design is revised; data-loss and migration gates remain at zero tolerated loss.
+**Exit evidence:** PRD task thresholds met or the design revised; no unresolved material usability/accessibility/data-loss findings. The app remains fully useful without a routine or guided plan. Frequency is a descriptive metric, not a target for pressure or fitness claims.
 
 ## Gate 4 — Release candidate
 
-Complete privacy disclosures, accessibility nutrition labels/statements, store assets, support/export/deletion flows, error monitoring decision, release automation, rollback plan, migration rehearsal, and signed readiness review.
+Complete both-platform device evidence, backup-policy/recovery verification, migration rehearsal, privacy disclosures, store/support content, name clearance, accessibility statements, release automation and signed readiness review. No production dependency, external service or data transfer enters without an accepted purpose/security/licence decision.
 
-## Post-MVP and future gates
+## Deferred discovery
 
-Only after the core record is trusted: optional account and encrypted sync, multi-device conflict UI, share cards, gym profiles, broader progression templates, carefully validated summaries, and platform extensions. Payments, social feeds, autonomous coaching, nutrition, marketplaces, and wearables require independent discovery and approval.
+Fixed/flexible schedules, curated programmes, ranked substitutions, short-workout recommendations, progression suggestions, advanced set/group workflows and richer analytics require fresh evidence and scope approval after the logging loop is trusted. Portable backup/import, cloud sync, gym profiles, sharing and platform extensions remain separately deferred. Payments, social features, nutrition and autonomous coaching are outside this first release.

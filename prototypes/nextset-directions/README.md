@@ -1,12 +1,21 @@
 # NextSet visual-direction prototype
 
-This is a disposable Product Design mobile prototype containing exactly three review directions:
+This is a disposable Product Design mobile prototype. Its default route is the owner-approved logging-first review proposal, using Tempo Ledger as its proposed visual base:
+
+- Start an empty workout without goals, programmes or scheduling.
+- Add exercises and record/edit sets.
+- Repeat a completed workout or save it as an optional routine.
+- Review honest empty states, workout history and comparable recorded observations.
+
+All default-route data is in memory and resets on reload. It is not a durable workout database or production app.
+
+The earlier three-direction exploration is retained at `?review=legacy`:
 
 1. Tempo Ledger
 2. Field Kit
 3. Open Pace
 
-Each direction exposes the ten required screens through the in-app screen index: onboarding, programme selection, Today, active workout, set entry, exercise substitution, completion, history, exercise progress, and programme editor.
+Each legacy direction exposes the earlier ten review screens through its in-app screen index: onboarding, programme selection, Today, active workout, set entry, exercise substitution, completion, history, exercise progress, and programme editor.
 
 The prototype uses realistic illustrative training data. It has no production persistence, account, analytics, cloud sync, coaching, or backend behaviour and must not be used as the production codebase.
 
@@ -24,7 +33,7 @@ Review-ready generated ten-screen boards are also present:
 - `field-kit-ten-screen-board.png`
 - `open-pace-ten-screen-board.png`
 
-The higher-resolution active-workout originals are retained beside them. All are generated direction references, not runtime screenshots. Source-mock copy and sample values define visual intent only; approved domain rules and content documents take precedence.
+The higher-resolution active-workout originals are retained beside them. All are generated direction references, not runtime screenshots. Source-mock copy and sample values define visual intent only; the documented current foundation rules and content proposals take precedence.
 
 ## Run locally
 
@@ -47,9 +56,13 @@ npm run build
 npm run test:sites
 ```
 
-The final foundation pass completed these checks and retained its evidence under [`evidence/2026-08-06/`](evidence/2026-08-06/). Re-run them after any prototype change.
+The current logging-first validation evidence is under [`evidence/2026-09-07-logging-first/`](evidence/2026-09-07-logging-first/). The August evidence below belongs to the preserved legacy exploration. Re-run the relevant checks after any prototype change.
 
-## Verified foundation status
+## Verified logging-first status
+
+The current default prototype passed TypeScript, 13 targeted Playwright cases, protected-runtime validation, production build and four Sites packaging cases. Its 15-state browser capture reported no runtime error, horizontal overflow or rendered control below 48 logical pixels. See [`design-qa.md`](design-qa.md) and [`evidence/2026-09-07-logging-first/command-results.md`](evidence/2026-09-07-logging-first/command-results.md).
+
+## Historical legacy status
 
 On 10 August 2026, the post-rework current source passed the production build, all 28 protected-runtime checks, 32 browser/runtime/product cases and four Sites package cases. A fresh 33-state capture at `2026-08-10T03:34:06.468Z` reports zero runtime errors, horizontal-overflow states or rendered controls below 48×48; all comparison plates, contact sheets and Pixel active captures were inspected at original resolution. See [`design-qa.md`](design-qa.md) and [`evidence/2026-08-06/command-results.md`](evidence/2026-08-06/command-results.md).
 

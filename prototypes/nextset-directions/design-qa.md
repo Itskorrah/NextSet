@@ -1,5 +1,35 @@
 # Design QA
 
+## Current logging-first review — 2026-09-07
+
+**Status:** executable and rendered QA complete for the default logging-first proposal. The historic three-direction study remains under `?review=legacy`; its August record below is preserved as historical evidence and does not describe the current default.
+
+### Source, rendered evidence and intended deviation
+
+- **Visual source:** [`../visual-references/tempo-ledger-active-workout-390x844.png`](../visual-references/tempo-ledger-active-workout-390x844.png), used for the Tempo Ledger palette, compact ledger rows, tabular values, restrained borders and reachable primary action.
+- **Rendered source:** [`src/Prototype.tsx`](src/Prototype.tsx) and [`src/prototype.css`](src/prototype.css), default route `/`.
+- **Current captures:** 15 browser-rendered phone states in [`evidence/2026-09-07-logging-first/`](evidence/2026-09-07-logging-first/), including empty Workouts/History/Progress, active blank/recorded, set entry, partial finish, routine, history, progress, Pixel active and 200% browser text.
+- **Direct comparison:** [Tempo reference and rendered logging-first active state](evidence/2026-09-07-logging-first/comparisons/tempo-source-vs-logging-first-active.png). They intentionally differ in navigation and content: the source is an earlier programme-centric fixture, while the owner-approved product direction is blank-workout-first. This is not a pixel-match claim.
+- **Viewport and context:** iPhone 393×852 and Pixel 427×952 runtime presets, light appearance, `en-AU` and reduced-motion emulation. See [`manifest.json`](evidence/2026-09-07-logging-first/manifest.json).
+
+### Findings and fixes
+
+- **[P2, fixed] Repeated exercise logging had two deliberate actions.** A populated reference/previous set now appears as a visible `Next set` row with a one-tap Log set action; Edit values remains separate.
+- **[P2, fixed] Multiple entries of the same exercise could omit data from one workout's trend.** Progress now aggregates compatible sets from all matching entries before choosing that workout's displayed observation.
+- **[P2, fixed] A unit change could round a stored weight when only reps were edited.** The display may be rounded for the current unit, but reps-only edits retain the original canonical mass and entered-unit provenance.
+- **[P3] The default prototype uses system fallbacks, not the proposed IBM Plex typography.** This is acceptable for the current interaction review; final type selection and native Dynamic Type treatment remain open design work.
+
+### Verification
+
+- TypeScript passed.
+- 13 targeted logging-first Playwright cases passed.
+- Capture found zero runtime errors, horizontal overflow or rendered controls under 48 logical pixels.
+- Original-resolution inspection covered empty, recorded, progress, Pixel and large-text captures. The large-text capture confirms readable priority actions and navigation in browser emulation; it is not proof of native Dynamic Type or screen-reader behaviour.
+
+The prototype is intentionally in-memory and resets on reload. It does not prove transactional persistence, native interruption restoration, migration, export, VoiceOver/TalkBack, notifications/haptics or physical-device behaviour. Those remain production gates.
+
+**Current logging-first result: passed**
+
 Status: current-source executable and rendered QA complete  
 Review date: 2026-08-10  
 Result: passed; no actionable P0-P2 design-QA findings remain
@@ -57,7 +87,7 @@ The three full-view plates are the primary side-by-side evidence. Focused origin
 
 ### Tempo Ledger
 
-The rendered direction now preserves the reference's warm ledger surface, disciplined rules, compact timer rail, previous-session comparison, aligned set rows, five labelled destinations and persistent vermilion set action. The render uses the approved four-set product fixture and truthful current-set state rather than copying inconsistent illustrative values from the generated reference.
+The rendered direction now preserves the reference's warm ledger surface, disciplined rules, compact timer rail, previous-session comparison, aligned set rows, five labelled destinations and persistent vermilion set action. The render uses the documented four-set foundation fixture and truthful current-set state rather than copying inconsistent illustrative values from the generated reference.
 
 Residual differences are non-blocking for direction selection: the protected device chrome consumes vertical space that is absent from the flattened reference, the proposed IBM Plex files are not bundled, and the previous-session block is simpler. These are recorded as P3 refinement work after direction selection, not hidden as a pixel match.
 
@@ -93,7 +123,7 @@ The Open Pace active reference and its board were safety-edited to remove an unr
 - Only light appearance and reduced-motion browser emulation were captured in this foundation pass.
 - Pixel evidence covers the critical active-workout state; all 30 required direction/screen captures are on the iPhone preset.
 - No physical device, native screen reader, native text scaling, colour-filter, haptic or failure-injected persistence run exists because this artefact is not the production application.
-- Some generated-reference copy/values were deliberately replaced by the approved product/domain fixture. The references remain visual, not normative behavioural truth.
+- Some generated-reference copy/values were deliberately replaced by the documented current foundation fixture. The references remain visual, not normative behavioural truth.
 
 The final static review then found further state-integrity defects in programme reordering/publishing, completion math, comparable-history boundaries, per-workout context, repeated substitution, cross-direction transient state, in-progress resume/navigation and valid-draft exits. Those defects were corrected. The current 32-case browser suite passes, including deliberate save/discard/keep-editing navigation, and the complete 33-state evidence set was regenerated after the last source change.
 

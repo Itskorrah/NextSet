@@ -4,6 +4,11 @@ Status: foundation proposal for product-owner approval
 Date: 2026-08-06  
 Scope: product experience and design-system constraints; this is not approval to build the production app
 
+## Current scope — logging-first, 2026-09-07
+
+Under [D-009](../project/decision-log.md), Workouts replaces programme-centred Today as the first surface. Start blank is immediately available; routines, history and progress add value without goals, programme enrolment or scheduling. Prior references below to scheduling, recommendations and programme versioning are deferred examples, not required logging UI. Keep advanced fields contextual, label all three main destinations and use familiar back/sheet dismissal patterns. Tempo Ledger is the proposed visual base, not final owner design approval.
+
+
 ## Design objective
 
 NextSet should make the next useful action obvious while preserving the user's plan, history and control. Its quality will be judged in the middle of a real session and on the fiftieth workout, not only during onboarding or in a polished screenshot.

@@ -4,6 +4,11 @@ Status: proposed foundation
 Date: 2026-08-06  
 Primary decisions: [mobile stack](adrs/0001-mobile-stack.md), [local storage](adrs/0002-local-first-storage.md), [cloud deferral](adrs/0003-defer-cloud-backend.md)
 
+## Logging-first applicability — 2026-09-07
+
+The owner-approved scope in [D-009](../project/decision-log.md) and the [current PRD](../product/product-requirements.md) takes precedence over the earlier broad foundation contract below. Blank workouts, repeats and standalone reusable routines require no goal, programme, enrolment, planned occurrence or schedule. Scheduling/sequence automation, carry-forward, ranked substitution recommendations, short-workout adaptation and progression suggestions are deferred; retained rules describe future contracts, not first-release obligations. Core set integrity, comparable descriptive records, editing, offline restoration and data ownership remain required. The current web prototype demonstrates interaction only, with memory that resets on reload; production durability gates remain future work.
+
+
 ## Architectural objective
 
 The user can plan, start, log, interrupt, restore, finish and edit a workout without a network. Every acknowledged critical action is durable. UI polish may evolve; workout history, identifiers and rules must survive product evolution.
@@ -17,7 +22,7 @@ VoiceOver / TalkBack / keyboard / touch
         |          |             |
    SQLite DB   OS services   user-selected export
                   |                 |
-      notifications, haptics,       +-- JSON/CSV/backup package
+      notifications, haptics,       +-- machine-readable export (restore deferred)
       secure small-value store
 
 No account, backend, push service or mandatory telemetry.
@@ -43,20 +48,20 @@ Adapters (SQLite, Expo platform services, future sync)
 
 ### 1. Domain
 
-Owns programme scheduling, set validation, workout lifecycle, substitution constraints, progression calculations, personal-record calculations and units. It is pure TypeScript with no React, Expo, SQL, wall-clock or random-number imports. Time and IDs arrive through ports. Rules return typed outcomes and explanations rather than mutating global state.
+Owns set validation, workout lifecycle, optional routine snapshots, comparable descriptive records and units. Scheduling and recommendation modules are future boundaries, not first-release dependencies. It is pure TypeScript with no React, Expo, SQL, wall-clock or random-number imports. Time and IDs arrive through ports. Rules return typed outcomes and explanations rather than mutating global state.
 
 Domain modules:
 
-- `programme`: versions, schedule modes, sequence advancement and missed-session policy.
+- `routine`: standalone versions and exercise/target snapshots; `programme` scheduling/enrolment is deferred.
 - `workout`: session state machine, exercise snapshots, orthogonal set role/measurement/load/laterality/effort semantics, ordering and completion.
-- `progression`: deterministic evaluation and explainable recommendation candidates.
+- Future `progression`: deterministic evaluation and explainable recommendation candidates; deferred.
 - `records`: personal-record definitions, invalidation and recalculation ranges.
 - `measurement`: canonical values, unit conversion and numeric precision.
 - `exercise`: catalogue/custom exercise semantics and substitution compatibility.
 
 ### 2. Application
 
-Each user intention is one command or query. Examples: `StartPlannedWorkout`, `CommitSet`, `EditCompletedSet`, `SubstituteExercise`, `CompleteWorkout`, `RestoreActiveWorkout`, `AdvanceFlexibleSequence`, `ExportTrainingData`.
+Each user intention is one command or query. Examples: `StartBlankWorkout`, `RepeatWorkout`, `StartRoutine`, `CommitSet`, `EditCompletedSet`, `CompleteWorkout`, `RestoreActiveWorkout`, `ExportTrainingData`.
 
 A command:
 

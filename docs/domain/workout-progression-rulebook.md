@@ -4,6 +4,11 @@ Status: proposed normative domain contract
 Last updated: 2026-08-06  
 Audience: product, design, domain, data, implementation and quality agents
 
+## Logging-first applicability — 2026-09-07
+
+The owner-approved scope in [D-009](../project/decision-log.md) and the [current PRD](../product/product-requirements.md) takes precedence over the earlier broad foundation contract below. Blank workouts, repeats and standalone reusable routines require no goal, programme, enrolment, planned occurrence or schedule. Scheduling/sequence automation, carry-forward, ranked substitution recommendations, short-workout adaptation and progression suggestions are deferred; retained rules describe future contracts, not first-release obligations. Core set integrity, comparable descriptive records, editing, offline restoration and data ownership remain required. The current web prototype demonstrates interaction only, with memory that resets on reload; production durability gates remain future work.
+
+
 ## 1. Authority, language and classifications
 
 This rulebook defines domain outcomes independently of screens or technology. **MUST**, **SHOULD** and **MAY** are normative. Examples are illustrative unless explicitly labelled a validation fixture. If another foundation document abbreviates a behavior, this rulebook and the linked programme/set specifications control domain meaning.
@@ -25,7 +30,7 @@ Every rule has at least one explicit classification. A combined label such as `P
 | ID | Class | Rule |
 |---|---|---|
 | WPR-INV-001 | D | Every persisted domain entity MUST have an immutable stable identifier; display names are never identity. |
-| WPR-INV-002 | D | Completed history MUST retain the programme version, exercise definition version, set semantics and rule version needed to interpret it. |
+| WPR-INV-002 | D | Completed history MUST retain exercise definition/version, set semantics and calculation version needed to interpret it. Source routine/programme versions are retained only when a source exists; blank workouts require neither. |
 | WPR-INV-003 | D | Planned targets, observed performance, calculated summaries and recommendations MUST be distinct types and labels. |
 | WPR-INV-004 | D | The same valid stored inputs and rule version MUST produce the same schedule, progression and record outcome. Locale, UI order and connectivity cannot change it. |
 | WPR-INV-005 | D | An operation acknowledged as saved MUST survive interruption. A failed operation MUST retain the last committed state and return an explicit recoverable error. |
@@ -85,12 +90,12 @@ Every rule has at least one explicit classification. A combined label such as `P
 |---|---|---|
 | WPR-SES-001 | D | Starting a workout creates one active-session identifier idempotently from the deliberate start action. Duplicate taps/retries cannot create duplicate sessions. |
 | WPR-SES-002 | D | Only one authoritative active workout exists per local profile in MVP. Attempting another start presents resume, finish/discard with confirmation, or cancel; it never silently replaces the active session. |
-| WPR-SES-003 | D | A session snapshots its source workout template and programme version at start. Later programme edits do not mutate it. |
+| WPR-SES-003 | D | A session snapshots exercises, measurement semantics and any optional source routine/template at start. Blank sessions have no template/programme requirement. Later source edits do not mutate active or completed sessions. |
 | WPR-SES-004 | C | Users MAY add, remove, reorder or substitute exercises/sets in an active session. Each deviation stores its scope and reason when provided; no reason is required. |
 | WPR-SES-005 | D | Set states are planned, draft or completed. Only completed, valid sets count in performance summaries and progression eligibility. A draft is recoverable input, not observed performance. |
 | WPR-SES-006 | C | A workout MAY be completed with planned work unfinished. Each planned item ends as completed, skipped or not attempted; these states are distinct. |
 | WPR-SES-007 | C | On partial completion, eligible skipped/not-attempted exercises MAY be carried forward only after preview. The copied work receives new planned identifiers and links to its source; completed sets are never copied as future work. |
-| WPR-SES-008 | D | Completing a workout is an idempotent local transaction that freezes the final snapshot, links the occurrence, updates the schedule cursor once, and invalidates/recomputes derived records. |
+| WPR-SES-008 | D | Completing a workout is an idempotent local transaction that freezes the final snapshot and invalidates/recomputes derived records. Blank, repeat and standalone-routine sessions have no schedule effects. Occurrence linking/cursor updates apply only to separately approved future scheduling. |
 | WPR-SES-009 | C | Discarding an active workout is destructive and requires explicit confirmation with scope. A recoverable soft-delete window MAY be provided; a discarded session does not advance schedule state. |
 | WPR-SES-010 | D | Elapsed workout duration excludes explicitly paused intervals if pause tracking is enabled; wall-clock start/end remain stored. The UI must name which duration it displays. |
 
@@ -283,3 +288,13 @@ A workout-domain feature is implementation-ready only when it has:
 - no unresolved decision that changes persisted meaning.
 
 Visual prototypes may demonstrate these rules but do not supersede them or constitute production validation.
+
+## Logging-first session rules
+
+| ID | Class | Rule |
+|---|---|---|
+| WPR-LOG-001 | C/D | Start blank creates an empty active session without onboarding, source plan, target or schedule. At least one valid explicitly recorded set is needed to finish. Empty sessions can be discarded with confirmation. |
+| WPR-LOG-002 | C/D | Repeat copies exercise identities/order and last recorded values as editable reference or draft targets into a new session. Completed-set state, timestamps, records and completion IDs are never copied. |
+| WPR-LOG-003 | C/D | Save as routine is optional. A named standalone template has no enrolment/schedule. Starting it snapshots its exercises and optional targets into a fresh session with zero recorded sets. Later routine edits cannot rewrite history. |
+| WPR-LOG-004 | D/N | History/trends include only valid recorded sets in completed, nondeleted sessions. Compare exact exercise identity, modality, set role and compatible units; never infer improvement from frequency or heavier load with fewer reps alone. Fewer than two comparable observations means insufficient trend data. Editing/deleting recalculates descriptive values. |
+| WPR-LOG-005 | D | No plan means no adherence, missed-workout, partial-plan or sequence claims. A session with exercises left without recorded sets discloses that omission without inventing completed work or automatically carrying anything forward. |

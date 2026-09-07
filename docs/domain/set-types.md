@@ -40,7 +40,7 @@ This prevents invalid semantics such as treating “superset”, “bodyweight�
 | `noteRef` | no | User note, protected as private data |
 | `revision` | yes | Monotonic edit revision |
 
-Canonical quantities are logical exact decimals plus explicit units; implementation MUST NOT use binary floating point as persisted identity/comparison for loads or distances. The SQLite architecture maps mass to exact integer grams and distance to exact integer millimetres while also retaining the user's original exact value/unit. That is the approved storage representation of this domain contract, not a competing numeric model. A future unit requiring finer precision needs a schema/rule decision rather than lossy rounding.
+Canonical quantities are logical exact decimals plus explicit units; implementation MUST NOT use binary floating point as persisted identity/comparison for loads or distances. The proposed SQLite architecture maps mass to exact integer grams and distance to exact integer millimetres while also retaining the user's original exact value/unit. That is the proposed canonical foundation storage representation of this domain contract, not a competing numeric model. A future unit requiring finer precision needs a schema/rule decision rather than lossy rounding.
 
 ### 2.1 Architecture SetEntry and SetType mapping
 

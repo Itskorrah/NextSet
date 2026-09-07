@@ -1,8 +1,13 @@
 # NextSet conceptual data model
 
-Status: proposed, implementation-ready at the conceptual level  
+Status: proposed conceptual model; logging-first applicability updated; no production schema accepted  
 Date: 2026-08-06  
 Scope: first-release local model plus explicit future-sync seams
+
+## Logging-first applicability — 2026-09-07
+
+The owner-approved scope in [D-009](../project/decision-log.md) and the [current PRD](../product/product-requirements.md) takes precedence over the earlier broad foundation contract below. Blank workouts, repeats and standalone reusable routines require no goal, programme, enrolment, planned occurrence or schedule. Scheduling/sequence automation, carry-forward, ranked substitution recommendations, short-workout adaptation and progression suggestions are deferred; retained rules describe future contracts, not first-release obligations. Core set integrity, comparable descriptive records, editing, offline restoration and data ownership remain required. The current web prototype demonstrates interaction only, with memory that resets on reload; production durability gates remain future work.
+
 
 ## Design invariants
 
@@ -130,7 +135,7 @@ Database --> MigrationMetadata / ExportMetadata / SyncMetadata
 
 | Entity | Key fields | Relationships and lifecycle |
 |---|---|---|
-| **WorkoutSession** | planned-workout ID optional, programme/template/version snapshot IDs, state, `completionKind` (`completion_kind`) nullable `full/partial`, title/focus snapshot, started/ended UTC, local date/time-zone, pause totals, source `planned/unscheduled/repeated`, completion revision, duration, user summary | One active row maximum in v1. ActiveWorkout = state `active`; CompletedWorkout = `completed`. A completed session requires `completionKind`; `partial` requires explicit completed/skipped/not-attempted child dispositions. Abandon retains a recoverable record until user confirms deletion. |
+| **WorkoutSession** | planned-workout ID optional, programme/template/version snapshot IDs all nullable for blank sessions, state, `completionKind` (`completion_kind`) nullable `full/partial`, title/focus snapshot, started/ended UTC, local date/time-zone, pause totals, source `blank/routine/repeated` (future `planned` only after approval), completion revision, duration, user summary | One active row maximum in v1. ActiveWorkout = state `active`; CompletedWorkout = `completed`. A completed session requires `completionKind`; `partial` requires explicit completed/skipped/not-attempted child dispositions. Abandon retains a recoverable record until user confirms deletion. |
 | **ActiveWorkout** | projection of WorkoutSession plus current exercise, durable draft, timer state and restoration marker | Never stored as a second copy. Startup queries it before Today. |
 | **CompletedWorkout** | projection of WorkoutSession plus completion revision and derived summaries | Edits create revisions and recalculation; status remains completed. |
 | **ExercisePerformance** | session ID, planned TemplateExercise ID optional, original/substituted Exercise IDs, name/equipment/representable-increment/target/unit snapshots, position, state `draft/completed/skipped/notAttempted`, substitution reason, group snapshot, started/completed times | Ordered exercise instance in one session. MVP captures explicit session equipment context and any representable increment directly; it does not depend on a named gym profile. A partial completion materialises a disposition for each planned child; `notAttempted` is distinct from skipped and has no fabricated observations. A substitution never rewrites the template or earlier history unless the user chooses a separate programme edit. |
@@ -310,3 +315,7 @@ Android recommends its standard backup system and warns that custom exported cop
 - Privacy decision on platform backup inclusion by data class.
 - Performance proof for indexes/projections against the large-history fixture.
 - Sync conflict usability tests before any multi-device launch.
+
+## Logging-first relationship boundary
+
+`WorkoutSession → ExercisePerformance → SetEntry` is independently valid with no plan. `WorkoutTemplate → WorkoutTemplateVersion → TemplateExercise → PlannedSet?` represents optional reusable routines; a source template is nullable and target rows are not observations. Repeats have an optional source-session ID for provenance and fresh child IDs. Routine naming/editing is user-facing; version IDs remain internal. `Programme`, enrolment, sequence, schedule, planned occurrence, progression recommendation and automated-shortening priority entities above are deferred schema candidates. They MUST NOT become required joins, startup prerequisites or first-release tables merely because this older catalogue describes them. Training goals and default schedules are absent from required logging-first preferences.

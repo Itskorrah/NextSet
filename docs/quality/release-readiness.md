@@ -3,11 +3,16 @@
 Status: checklist and evidence contract; no production release is currently ready  
 Date: 2026-08-06
 
+## Logging-first applicability — 2026-09-07
+
+The owner-approved scope in [D-009](../project/decision-log.md) and the [current PRD](../product/product-requirements.md) takes precedence over the earlier broad foundation contract below. Blank workouts, repeats and standalone reusable routines require no goal, programme, enrolment, planned occurrence or schedule. Scheduling/sequence automation, carry-forward, ranked substitution recommendations, short-workout adaptation and progression suggestions are deferred; retained rules describe future contracts, not first-release obligations. Core set integrity, comparable descriptive records, editing, offline restoration and data ownership remain required. The current web prototype demonstrates interaction only, with memory that resets on reload; production durability gates remain future work.
+
+
 ## Two distinct gates
 
 ### Foundation milestone (current phase)
 
-This milestone may be presented for approval when research/product/domain/design/architecture/quality/agent/repository artefacts are complete and cross-reviewed; exactly three high-fidelity directions are reviewable; all uncertainty and citations are visible; validation evidence is recorded; and the repository branch/PR is ready. It must stop before production implementation.
+This milestone may be presented for approval when research/product/domain/design/architecture/quality/agent/repository artefacts are complete and cross-reviewed; the logging-first Tempo Ledger proposal is reviewable and the earlier three-direction exploration is retained separately; all uncertainty and citations are visible; validation evidence is recorded; and the repository branch/PR is ready. It must stop before production implementation.
 
 Required product-owner decisions:
 
@@ -72,8 +77,8 @@ Evidence: CI logs, hashes/signatures, SBOM/licences, scans, config/permission di
 - [ ] Domain state transitions/rules have direct tests; critical branch/mutation gates pass.
 - [ ] Critical E2E journeys pass with typical and large-history fixtures.
 - [ ] Light/dark, empty/error/recovery, small screen and locale/unit variants reviewed.
-- [ ] Fixed/flexible schedule, skip/move/repeat/partial/unscheduled behaviours match the rulebook.
-- [ ] Progression/PR calculations and explanations match approved formulas and source provenance.
+- [ ] Blank/repeat/routine starts, draft handling and honest completion match WPR-LOG-*; scheduling and automated adaptation remain deferred.
+- [ ] Comparable descriptive trends/records match approved definitions and source provenance; progression suggestions remain deferred.
 - [ ] No open P0–P2. Any accepted P3 has an owner, expiry and approval and cannot conceal misleading, inaccessible, unsafe or data-risk behaviour.
 - [ ] Critical suite flake consistency ≥99% over last 100 unchanged runs; no required test quarantined.
 

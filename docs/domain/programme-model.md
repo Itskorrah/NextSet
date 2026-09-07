@@ -4,6 +4,11 @@ Status: proposed normative domain model
 Last updated: 2026-08-06  
 Related: [`workout-progression-rulebook.md`](workout-progression-rulebook.md), [`set-types.md`](set-types.md)
 
+## Logging-first applicability — 2026-09-07
+
+The owner-approved scope in [D-009](../project/decision-log.md) and the [current PRD](../product/product-requirements.md) takes precedence over the earlier broad foundation contract below. Blank workouts, repeats and standalone reusable routines require no goal, programme, enrolment, planned occurrence or schedule. Scheduling/sequence automation, carry-forward, ranked substitution recommendations, short-workout adaptation and progression suggestions are deferred; retained rules describe future contracts, not first-release obligations. Core set integrity, comparable descriptive records, editing, offline restoration and data ownership remain required. The current web prototype demonstrates interaction only, with memory that resets on reload; production durability gates remain future work.
+
+
 ## 1. Purpose and modelling choices
 
 This specification defines the logical programme model. It deliberately separates an authored plan from a scheduled occurrence, an active session and observed performance:

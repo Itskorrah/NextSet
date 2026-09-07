@@ -4,6 +4,13 @@ Status: three foundation proposals; none selected
 Date: 2026-08-06  
 Decision owner: product owner
 
+## Current review target — 2026-09-07
+
+The owner requested a logging-first redesign using **Tempo Ledger as the proposed base**. The default prototype now targets Workouts, an empty workout/exercise picker, fast set entry, optional routines, history and descriptive progress. It removes goal/programme/schedule gates. The existing Tempo active-workout reference supplies colour, typographic hierarchy, ledger rows and restrained actions; changed navigation/content follows the newer owner instruction, so pixel identity to the old programme-centric screen is not claimed. The other directions and old flow remain available only at `?review=legacy` for historical comparison. The scored comparison below is the earlier design hypothesis, not usability evidence or a final selection.
+
+The supplied [mobile-ios-design skill](https://github.com/wshobson/agents/blob/main/plugins/ui-design/skills/mobile-ios-design/SKILL.md) informs semantic hierarchy, clear labelled tabs, safe-area clearance and accessible controls. Its SwiftUI code does not change the proposed React Native/Expo stack. Root 48×48 target requirements take precedence over the skill's 44-point sample. Physical VoiceOver/Dynamic Type/dark-mode verification remains a future native gate.
+
+
 ## Evidence and interpretation
 
 The three source images were inspected directly at their original repository resolution on 2026-08-06:
@@ -93,7 +100,7 @@ Strengths visible in the reference are large exercise/title text, strong numeric
 | Colour-role system | Dark graphite canvas, slightly raised equipment panels, warm white ink and safety amber action/progress. Mint confirms saved state and coral denotes errors; amber is never reused for warning. A light high-contrast maintenance theme is separately designed. |
 | Typography | Archivo Expanded/Black for short display headings, Archivo regular for labels and Atkinson Hyperlegible Mono for numeric input and timer values. Uppercase is limited to headings/actions; explanatory copy stays sentence case in a wider, readable face. |
 | Shape language | Hard rectangles, 0–3 px radii, 2 px rails, clipped/chamfered primary-button corners and mechanically separated modules. No glass, glow or generic soft cards. |
-| Spacing | 4 px base with compact 4/8/12/16 rhythm; outer gutters 14–16 px. Density is earned by larger screens and short labels, never by targets below 48 px or body text below the approved role. |
+| Spacing | 4 px base with compact 4/8/12/16 rhythm; outer gutters 14–16 px. Density is earned by larger screens and short labels, never by targets below 48 px or body text below the proposed role minimum. |
 | Navigation style | Three large equipment-bay destinations: Workout, History and Settings. Programmes and Today live within Workout as a task switcher. This provides the largest tab targets but hides planning depth one level deeper. |
 | Icon direction | Bold squared glyphs and simple equipment silhouettes, filled only for active state. Exercise imagery is optional and must have a text alternative; it cannot be the only way to identify an exercise. |
 | Active-workout treatment | Top exercise strip shows physical position; current exercise dominates; timer becomes a linear amber rail; prior set is a compact console; load/reps use two oversized stepper bays; set sequence stays horizontally visible. This is the reference’s defining interaction idea. |
@@ -193,7 +200,7 @@ Visible strengths are plain labels, generous separation, large values, a clear c
 
 ## Scored comparison
 
-Scores are design hypotheses on a 1–5 scale, where 5 is strongest. Weights reflect the approved product promise and repeated-workout risk. Weighted result is out of 5.00.
+Scores are design hypotheses on a 1–5 scale, where 5 is strongest. Weights reflect the product-owner-specified promise and repeated-workout risk. Weighted result is out of 5.00.
 
 | Criterion | Weight | Tempo Ledger | Field Kit | Open Pace |
 |---|---:|---:|---:|---:|

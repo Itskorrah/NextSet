@@ -3,6 +3,11 @@
 Status: implementation-ready acceptance catalogue  
 Last updated: 2026-08-06
 
+## Logging-first applicability — 2026-09-07
+
+The owner-approved scope in [D-009](../project/decision-log.md) and the [current PRD](../product/product-requirements.md) takes precedence over the earlier broad foundation contract below. Blank workouts, repeats and standalone reusable routines require no goal, programme, enrolment, planned occurrence or schedule. Scheduling/sequence automation, carry-forward, ranked substitution recommendations, short-workout adaptation and progression suggestions are deferred; retained rules describe future contracts, not first-release obligations. Core set integrity, comparable descriptive records, editing, offline restoration and data ownership remain required. The current web prototype demonstrates interaction only, with memory that resets on reload; production durability gates remain future work.
+
+
 ## 1. Test contract
 
 These scenarios are technology-independent and must be converted into automated domain tests. Scenarios labelled **transaction** require a real local persistence integration test with failure injection in addition to a pure-domain test. Scenarios labelled **interaction** also require UI/accessibility evidence. Exact persisted values, stable IDs, revisions, provenance and error codes must be asserted—not only visible copy.

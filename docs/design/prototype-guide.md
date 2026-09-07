@@ -3,6 +3,11 @@
 Status: disposable foundation design artefacts; not production code  
 Date: 2026-08-06
 
+## Current entry point — logging-first
+
+As of 2026-09-07, `/` opens the revised logging-first Tempo Ledger proposal without onboarding. `/?review=legacy` preserves the earlier three-direction exploration described below. The revised prototype starts with empty history and computes descriptive progress only from workouts explicitly entered during the preview session. All data resets on reload; it is never advertised as durable storage. The ten-screen inventory and August evidence below belong to the legacy exploration, not the current default product flow. Current evidence is recorded in the prototype design-QA report.
+
+
 ## Read this first
 
 Everything under [`../../prototypes/`](../../prototypes/) is disposable visual exploration. It is not the production NextSet application, a tested workout engine, a durable local database, a native accessibility implementation or an approved design system.

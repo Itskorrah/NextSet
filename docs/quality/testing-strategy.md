@@ -4,6 +4,11 @@ Status: proposed for future implementation
 Date: 2026-08-06  
 Quality principle: protect user-entered workout data before optimising test-count vanity metrics
 
+## Logging-first applicability — 2026-09-07
+
+The owner-approved scope in [D-009](../project/decision-log.md) and the [current PRD](../product/product-requirements.md) takes precedence over the earlier broad foundation contract below. Blank workouts, repeats and standalone reusable routines require no goal, programme, enrolment, planned occurrence or schedule. Scheduling/sequence automation, carry-forward, ranked substitution recommendations, short-workout adaptation and progression suggestions are deferred; retained rules describe future contracts, not first-release obligations. Core set integrity, comparable descriptive records, editing, offline restoration and data ownership remain required. The current web prototype demonstrates interaction only, with memory that resets on reload; production durability gates remain future work.
+
+
 ## Outcomes
 
 The test system must prove four things:
@@ -20,7 +25,7 @@ Tests are evidence, not the quality goal. Coverage cannot compensate for an unte
 | Layer | Primary scope | Environment | Merge/release expectation |
 |---|---|---|---|
 | Static contracts | Type safety, dependency direction, lint, SQL/schema checks, secret/licence/dependency scan | CI | Every PR; blocking |
-| Domain unit/property | Set validation, scheduling, sequence, progression, PRs, conversions, state machines | Pure TypeScript, injected clock/IDs | Every PR; blocking |
+| Domain unit/property | Set validation, blank/repeat/routine lifecycle, comparable records, conversions; future scheduling/progression only when approved | Pure TypeScript, injected clock/IDs | Every PR; blocking |
 | Database/migration | Repositories, constraints, transactions, query plans, forward migrations, corruption/low-space cases | Real SQLite version plus native integration | Every PR core; full matrix nightly/release |
 | Component | Rendering, input, semantic roles/state/value, large text/reduced motion, error/saving states | React Native component harness | Every PR for changed components |
 | Feature integration | Application command through SQLite/projection/platform fakes | Native app/dev build | Every PR for changed feature; blocking |
@@ -72,13 +77,13 @@ Run a one-week tool spike against start/log/edit/terminate/active-session-restor
 
 - Completing or retrying the same command is idempotent.
 - Sequence pointer always references a live item and advances at most once per disposition.
-- Unit round-trip remains exact within the approved integer-gram/millimetre precision; canonical value does not depend on display unit, and the committed original exact decimal/unit survives display-preference changes, export and migration.
+- Unit round-trip remains exact within the proposed canonical integer-gram/millimetre representation; canonical value does not depend on display unit, and the committed original exact decimal/unit survives display-preference changes, export and migration.
 - Reordering never loses/duplicates a child and results in a total deterministic order.
 - Programme version publication never mutates a prior version or completed snapshot.
 - Derived records equal a full rebuild after any generated valid edit sequence.
 - Invalid input never changes persisted state.
 
-Gate: 100% of named rulebook rules, state transitions and domain edge scenarios have direct tests. Critical domain modules target ≥95% branch coverage and ≥90% mutation score; surviving mutants in safety/schedule/record logic block release. Coverage exceptions require a reviewed reason tied to unreachable/generated code.
+Gate: 100% of currently approved MVP rulebook rules, state transitions and domain edge scenarios have direct tests; retained POST/FUTURE contracts are gated only when brought into scope. Critical domain modules target ≥95% branch coverage and ≥90% mutation score; surviving mutants in safety/schedule/record logic block release. Coverage exceptions require a reviewed reason tied to unreachable/generated code.
 
 ## Database and migration testing
 
@@ -130,16 +135,16 @@ Prefer user-observable queries/labels over implementation selectors. A screensho
 
 Automate at minimum:
 
-1. first launch → choose goal/template/schedule → Today;
-2. one action starts expected workout;
-3. start unscheduled workout;
-4. log normal/warm-up/drop set, add/edit/delete/reorder, rest timer continues without blocking;
-5. substitute unavailable exercise and preserve intent/explanation;
+1. first launch → Workouts → start blank without goal/template/schedule;
+2. one action starts a blank workout or resumes the active session;
+3. repeat a historical workout and start a standalone routine, each with zero completed sets;
+4. log approved set modalities, add/edit/delete/reorder, rest timer continues without blocking; advanced drop/group authoring deferred;
+5. manually choose another exercise without inheriting incomparable history; ranked substitutions deferred;
 6. background, lock, terminate and reboot during active workout; restore latest committed state;
 7. complete entirely in airplane mode; review history;
-8. miss/move/skip/repeat fixed and flexible workouts;
-9. short-workout mode and explanation;
-10. edit completed workout and recalculate PR/recommendation/history;
+8. navigate away from active work and resume without losing recorded sets or silently committing drafts;
+9. history/trends handle empty, one-observation, comparable, edited and deleted histories without invented improvements;
+10. edit completed workout and recalculate comparable records/history; recommendations deferred;
 11. export offline and verify the documented machine-readable content/checksums without changing the live DB;
 12. verify declared platform backup inclusion/exclusion and actual OS restore behavior where supported;
 13. failed write, failed migration, corrupt DB and disk-full recovery;

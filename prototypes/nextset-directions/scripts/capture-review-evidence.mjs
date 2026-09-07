@@ -9,7 +9,9 @@ const workspaceRoot = path.resolve(prototypeRoot, "../..");
 const evidenceRoot = path.join(prototypeRoot, "evidence", "2026-08-06");
 const screenshotRoot = path.join(evidenceRoot, "screens");
 const comparisonRoot = path.join(evidenceRoot, "comparisons");
-const previewUrl = process.env.NEXTSET_PREVIEW_URL ?? "http://127.0.0.1:4173/";
+const previewUrl = process.env.NEXTSET_PREVIEW_URL ?? "http://127.0.0.1:4173/?review=legacy";
+const capturedAt = new Date().toISOString();
+const captureDate = capturedAt.slice(0, 10);
 
 const directions = [
   { name: "Tempo Ledger", slug: "tempo-ledger", reference: "tempo-ledger-active-workout-390x844.png" },
@@ -161,7 +163,7 @@ for (const direction of directions) {
       figcaption { margin-bottom: 8px; font-size: 12px; font-weight: 700; letter-spacing: .03em; }
       img { display: block; width: 100%; height: auto; border: 1px solid #aaa; background: white; }
     </style></head><body>
-      <h1>${direction.name} · active workout comparison · 2026-08-06</h1>
+      <h1>${direction.name} · active workout comparison · ${captureDate}</h1>
       <main>
         <figure><figcaption>Generated source reference · 390×844</figcaption><img alt="Source reference" src="data:image/png;base64,${reference.toString("base64")}"></figure>
         <figure><figcaption>Rendered iPhone app viewport · 393×852</figcaption><img alt="Rendered implementation" src="data:image/png;base64,${implementation.toString("base64")}"></figure>
@@ -189,7 +191,7 @@ for (const direction of directions) {
       figcaption { height: 30px; margin-bottom: 5px; font-size: 10px; font-weight: 700; line-height: 1.2; }
       img { display: block; width: 100%; height: auto; border: 1px solid #aaa; background: white; }
     </style></head><body>
-      <h1>${direction.name} · ten rendered iPhone review states · 2026-08-06</h1>
+      <h1>${direction.name} · ten rendered iPhone review states · ${captureDate}</h1>
       <main>${captures.map(({ screen, image }, index) => `
         <figure><figcaption>${index + 1} · ${screen.label}</figcaption><img alt="${screen.label}" src="data:image/png;base64,${image.toString("base64")}"></figure>
       `).join("")}</main>
@@ -202,7 +204,7 @@ for (const direction of directions) {
 await browser.close();
 
 const evidence = {
-  capturedAt: new Date().toISOString(),
+  capturedAt,
   previewUrl,
   browser: "Playwright Chromium 149 via @playwright/test 1.61.1",
   viewport: { width: 1400, height: 1200 },

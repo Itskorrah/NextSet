@@ -1,10 +1,10 @@
 # ADR-0002: SQLite is the local source of truth
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-08-06
 - Owners: architecture and product owner
 - Decision class: expensive to reverse once users have data
-- Approval required: yes
+- Approval required: recorded in D-010 on 2026-09-07
 
 ## Context
 
@@ -55,4 +55,3 @@ Negative:
 - A future feature needs write concurrency or data volume that measured SQLite behaviour cannot support.
 - An approved account/sync design requires a different local representation; migration must preserve existing IDs and history.
 - The threat model requires database-level encryption and an approved backup/key-recovery design exists.
-

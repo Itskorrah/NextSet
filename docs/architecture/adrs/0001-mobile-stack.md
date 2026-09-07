@@ -1,10 +1,10 @@
 # ADR-0001: React Native with Expo for the mobile stack
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-08-06
 - Owners: architecture and product owner
 - Decision class: expensive to reverse
-- Approval required: yes, before production implementation
+- Approval required: recorded in D-010 on 2026-09-07
 
 ## Context
 
@@ -54,4 +54,3 @@ Controls:
 ## Evidence
 
 Official Expo documentation states that development builds can use native libraries/configuration, and official React Native documentation exposes both platform accessibility APIs and release-mode performance guidance. [Expo development builds](https://docs.expo.dev/develop/development-builds/introduction/), [React Native accessibility](https://reactnative.dev/docs/accessibility), [React Native performance](https://reactnative.dev/docs/performance.html) (accessed 2026-08-06).
-

@@ -238,4 +238,4 @@ Do not let Field Kit become militaristic or Open Pace become patronising. Tempo 
 - Does a missed or changed workout remain neutral?
 - Can the sentence survive screen-reader output, large text and translation without relying on layout or colour?
 - Does the error preserve input and name a safe next action?
-- Is any metric tied to an approved question and real source data?
+- Is any metric tied to a documented product question and real source data?

@@ -1,8 +1,8 @@
 # NextSet
 
-NextSet is a mobile workout-tracking and training companion focused on making planning, starting, recording, and progressing through workouts easier.
+NextSet is a mobile workout logger focused on recording workouts quickly, repeating what works, and understanding progress. Goals, programmes and schedules are not required.
 
-This repository is currently at the **product foundation and system design** milestone. It contains research, product rules, user journeys, architecture decisions, quality standards, agent workflows, and three disposable visual-direction prototypes. It intentionally does **not** contain the production mobile application.
+This repository completed its product foundation and system-design milestone on 2026-09-07. It now contains the approved product rules, user journeys, architecture decisions, quality standards, disposable visual prototypes, and the local-first native mobile application as it is built.
 
 ## Review this milestone
 
@@ -16,11 +16,11 @@ Start with:
 6. [`docs/domain/workout-progression-rulebook.md`](docs/domain/workout-progression-rulebook.md)
 7. [`docs/quality/release-readiness.md`](docs/quality/release-readiness.md)
 
-The three design directions are reviewable under [`prototypes/`](prototypes/). Their mock data is illustrative; it is not production analytics or a working workout database.
+The current logging-first Tempo Ledger proposal and the preserved earlier three design directions are reviewable under [`prototypes/`](prototypes/). The current preview starts empty and keeps entered workouts only in memory until reload. The legacy directions use illustrative sample data. Neither is a production workout database.
 
 ## Phase boundary
 
-Production implementation must not begin until the product owner approves the MVP boundary, visual direction, architecture, and critical user journeys recorded in [`docs/project/assumptions-questions.md`](docs/project/assumptions-questions.md).
+The owner accepted the narrower logging-first scope in D-009 and approved the visual direction, critical journeys and local-first architecture in D-010 on 2026-09-07. Production implementation is authorised only for that approved scope.
 
 ## Repository map
 
@@ -33,6 +33,7 @@ Production implementation must not begin until the product owner approves the MV
 - `docs/quality/` — acceptance, testing, accessibility, performance, and readiness gates
 - `docs/agents/` — multi-agent operating and evidence model
 - `prototypes/` — disposable design artefacts, visual references, and prototype source
+- `mobile/` — the local-first Expo native app and its implementation checks
 - `skills/` — reusable manual workflows packaged in Codex Skill format; this managed workspace does not permit writing the auto-discovered `.agents/skills/` path
 
 ## Licence status
