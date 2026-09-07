@@ -1,6 +1,7 @@
 import * as SQLite from 'expo-sqlite';
-import { makeId, type ExerciseMode, type ExerciseRecord, type ProgressRecord, type RoutineRecord, type SetRecord, type WorkoutRecord } from '../domain/models';
+import { makeId, type AppSettings, type ExerciseMode, type ExerciseRecord, type LoadUnit, type ProgressRecord, type RoutineRecord, type SetRecord, type WorkoutRecord } from '../domain/models';
 import { deriveProgress } from '../domain/progress';
+import { validateSetInput, type SetInput } from '../domain/setValidation';
 
 type WorkoutRow = Omit<WorkoutRecord, 'exercises'>;
 type ExerciseRow = Omit<ExerciseRecord, 'sets'>;
@@ -55,6 +56,22 @@ async function database(): Promise<SQLite.SQLiteDatabase> {
         mode TEXT NOT NULL CHECK (mode IN ('weight', 'bodyweight', 'time')),
         position INTEGER NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS app_settings (
+        key TEXT PRIMARY KEY NOT NULL,
+        value TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS workout_audit (
+        id TEXT PRIMARY KEY NOT NULL,
+        workout_id TEXT NOT NULL,
+        event_type TEXT NOT NULL,
+        payload_json TEXT NOT NULL,
+        created_at INTEGER NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS deleted_workouts (
+        workout_id TEXT PRIMARY KEY NOT NULL,
+        deleted_at INTEGER NOT NULL,
+        snapshot_json TEXT NOT NULL
+      );
     `);
     const exerciseColumns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(exercises)');
     if (!exerciseColumns.some((column) => column.name === 'definition_key')) {
@@ -65,6 +82,10 @@ async function database(): Promise<SQLite.SQLiteDatabase> {
     if (!routineColumns.some((column) => column.name === 'definition_key')) {
       await db.execAsync("ALTER TABLE routine_exercises ADD COLUMN definition_key TEXT NOT NULL DEFAULT ''");
       await db.execAsync("UPDATE routine_exercises SET definition_key = 'legacy:' || mode || ':' || lower(replace(name, ' ', '-')) WHERE definition_key = ''");
+    }
+    const deletedColumns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(deleted_workouts)');
+    if (!deletedColumns.some((column) => column.name === 'snapshot_json')) {
+      await db.execAsync("ALTER TABLE deleted_workouts ADD COLUMN snapshot_json TEXT NOT NULL DEFAULT '{}' ");
     }
     return db;
   });
@@ -88,6 +109,19 @@ async function hydrateWorkout(row: WorkoutRow): Promise<WorkoutRecord> {
 }
 
 export const workoutRepository = {
+  async settings(): Promise<AppSettings> {
+    const db = await database();
+    const row = await db.getFirstAsync<{ value: LoadUnit }>("SELECT value FROM app_settings WHERE key = 'load_unit'");
+    return { loadUnit: row?.value === 'lb' ? 'lb' : 'kg' };
+  },
+
+  async setLoadUnit(loadUnit: LoadUnit): Promise<void> {
+    await serialWrite(async () => {
+      const db = await database();
+      await db.runAsync("INSERT OR REPLACE INTO app_settings (key, value) VALUES ('load_unit', ?)", loadUnit);
+    });
+  },
+
   async active(): Promise<WorkoutRecord | null> {
     const db = await database();
     const row = await db.getFirstAsync<WorkoutRow>('SELECT id, title, source, status, started_at as startedAt, completed_at as completedAt FROM workouts WHERE status = \'active\' LIMIT 1');
@@ -126,15 +160,13 @@ export const workoutRepository = {
     });
   },
 
-  async logSet(exercise: ExerciseRecord, values: { reps?: number; loadKg?: number; seconds?: number }): Promise<void> {
+  async logSet(exercise: ExerciseRecord, values: SetInput): Promise<void> {
     await serialWrite(async () => {
       const db = await database();
-      const active = await db.getFirstAsync<{ id: string }>('SELECT workouts.id FROM workouts INNER JOIN exercises ON exercises.workout_id = workouts.id WHERE exercises.id = ? AND workouts.status = \'active\'', exercise.id);
+      const active = await db.getFirstAsync<{ id: string; mode: ExerciseMode }>('SELECT workouts.id, exercises.mode FROM workouts INNER JOIN exercises ON exercises.workout_id = workouts.id WHERE exercises.id = ? AND workouts.status = \'active\'', exercise.id);
       if (!active) throw new Error('This workout has already finished. Your set was not saved.');
-      const reps = exercise.mode === 'time' ? null : values.reps ?? null;
-      const loadGrams = exercise.mode === 'weight' && values.loadKg !== undefined ? Math.round(values.loadKg * 1000) : null;
-      const duration = exercise.mode === 'time' ? values.seconds ?? null : null;
-      await db.runAsync('INSERT INTO sets (id, exercise_id, reps, load_grams, duration_seconds, created_at) VALUES (?, ?, ?, ?, ?, ?)', makeId(), exercise.id, reps, loadGrams, duration, Date.now());
+      const valid = validateSetInput(active.mode, values);
+      await db.runAsync('INSERT INTO sets (id, exercise_id, reps, load_grams, duration_seconds, created_at) VALUES (?, ?, ?, ?, ?, ?)', makeId(), exercise.id, valid.reps, valid.loadGrams, valid.durationSeconds, Date.now());
     });
   },
 
@@ -150,6 +182,47 @@ export const workoutRepository = {
       });
     });
     return true;
+  },
+
+  async renameWorkout(workoutId: string, title: string): Promise<void> {
+    const trimmed = title.trim();
+    if (!trimmed) throw new Error('Give this workout a name.');
+    await serialWrite(async () => {
+      const db = await database();
+      await db.withTransactionAsync(async () => {
+        const workout = await db.getFirstAsync<{ id: string; title: string }>('SELECT id, title FROM workouts WHERE id = ?', workoutId);
+        if (!workout) throw new Error('This workout no longer exists.');
+        await db.runAsync('UPDATE workouts SET title = ? WHERE id = ?', trimmed, workoutId);
+        await db.runAsync('INSERT INTO workout_audit (id, workout_id, event_type, payload_json, created_at) VALUES (?, ?, ?, ?, ?)', makeId(), workoutId, 'workout_renamed', JSON.stringify({ before: workout.title, after: trimmed }), Date.now());
+      });
+    });
+  },
+
+  async updateSet(setId: string, values: SetInput): Promise<void> {
+    await serialWrite(async () => {
+      const db = await database();
+      await db.withTransactionAsync(async () => {
+        const current = await db.getFirstAsync<SetRecord & { workoutId: string; mode: ExerciseMode }>('SELECT sets.id, sets.exercise_id as exerciseId, sets.reps, sets.load_grams as loadGrams, sets.duration_seconds as durationSeconds, sets.created_at as createdAt, exercises.workout_id as workoutId, exercises.mode FROM sets INNER JOIN exercises ON exercises.id = sets.exercise_id INNER JOIN workouts ON workouts.id = exercises.workout_id WHERE sets.id = ? AND workouts.status IN (\'active\', \'completed\')', setId);
+        if (!current) throw new Error('This set is no longer available to edit.');
+        const valid = validateSetInput(current.mode, values);
+        await db.runAsync('UPDATE sets SET reps = ?, load_grams = ?, duration_seconds = ? WHERE id = ?', valid.reps, valid.loadGrams, valid.durationSeconds, setId);
+        await db.runAsync('INSERT INTO workout_audit (id, workout_id, event_type, payload_json, created_at) VALUES (?, ?, ?, ?, ?)', makeId(), current.workoutId, 'set_edited', JSON.stringify({ setId, before: current, after: valid }), Date.now());
+      });
+    });
+  },
+
+  async deleteSet(setId: string): Promise<void> {
+    await serialWrite(async () => {
+      const db = await database();
+      await db.withTransactionAsync(async () => {
+        const current = await db.getFirstAsync<SetRecord & { workoutId: string; status: WorkoutRecord['status'] }>('SELECT sets.id, sets.exercise_id as exerciseId, sets.reps, sets.load_grams as loadGrams, sets.duration_seconds as durationSeconds, sets.created_at as createdAt, exercises.workout_id as workoutId, workouts.status FROM sets INNER JOIN exercises ON exercises.id = sets.exercise_id INNER JOIN workouts ON workouts.id = exercises.workout_id WHERE sets.id = ?', setId);
+        if (!current) throw new Error('This set no longer exists.');
+        const count = await db.getFirstAsync<{ count: number }>('SELECT COUNT(*) as count FROM sets INNER JOIN exercises ON exercises.id = sets.exercise_id WHERE exercises.workout_id = ?', current.workoutId);
+        if (current.status === 'completed' && (count?.count ?? 0) <= 1) throw new Error('Delete the completed workout instead of leaving an empty history record.');
+        await db.runAsync('DELETE FROM sets WHERE id = ?', setId);
+        await db.runAsync('INSERT INTO workout_audit (id, workout_id, event_type, payload_json, created_at) VALUES (?, ?, ?, ?, ?)', makeId(), current.workoutId, 'set_deleted', JSON.stringify({ setId, previous: current }), Date.now());
+      });
+    });
   },
 
   async repeat(workout: WorkoutRecord): Promise<void> {
@@ -169,6 +242,23 @@ export const workoutRepository = {
     });
   },
 
+  async renameRoutine(routineId: string, name: string): Promise<void> {
+    const trimmed = name.trim();
+    if (!trimmed) throw new Error('Give this routine a name.');
+    await serialWrite(async () => {
+      const db = await database();
+      const result = await db.runAsync('UPDATE routines SET name = ? WHERE id = ?', trimmed, routineId);
+      if (result.changes !== 1) throw new Error('This routine no longer exists.');
+    });
+  },
+
+  async deleteRoutine(routineId: string): Promise<void> {
+    await serialWrite(async () => {
+      const db = await database();
+      await db.runAsync('DELETE FROM routines WHERE id = ?', routineId);
+    });
+  },
+
   async routines(): Promise<RoutineRecord[]> {
     const db = await database();
     const routines = await db.getAllAsync<{ id: string; name: string }>('SELECT id, name FROM routines ORDER BY created_at DESC');
@@ -184,5 +274,47 @@ export const workoutRepository = {
 
   async progress(): Promise<ProgressRecord[]> {
     return deriveProgress(await this.completed());
+  },
+
+  async exportPayload(): Promise<string> {
+    const db = await database();
+    const [settings, workouts, exercises, sets, routines, routineExercises, audit, deletedWorkouts] = await Promise.all([
+      db.getAllAsync('SELECT key, value FROM app_settings'),
+      db.getAllAsync('SELECT * FROM workouts'),
+      db.getAllAsync('SELECT * FROM exercises'),
+      db.getAllAsync('SELECT * FROM sets'),
+      db.getAllAsync('SELECT * FROM routines'),
+      db.getAllAsync('SELECT * FROM routine_exercises'),
+      db.getAllAsync('SELECT * FROM workout_audit'),
+      db.getAllAsync('SELECT * FROM deleted_workouts'),
+    ]);
+    return JSON.stringify({ schemaVersion: 1, exportedAt: new Date().toISOString(), data: { settings, workouts, exercises, sets, routines, routineExercises, audit, deletedWorkouts } }, null, 2);
+  },
+
+  async deleteWorkout(workoutId: string): Promise<void> {
+    await serialWrite(async () => {
+      const db = await database();
+      await db.withTransactionAsync(async () => {
+        const existing = await db.getFirstAsync<{ id: string }>('SELECT id FROM workouts WHERE id = ?', workoutId);
+        if (!existing) throw new Error('This workout no longer exists.');
+        const workout = await db.getFirstAsync('SELECT * FROM workouts WHERE id = ?', workoutId);
+        const exercises = await db.getAllAsync('SELECT * FROM exercises WHERE workout_id = ? ORDER BY position, id', workoutId);
+        const sets = await db.getAllAsync('SELECT sets.* FROM sets INNER JOIN exercises ON exercises.id = sets.exercise_id WHERE exercises.workout_id = ? ORDER BY sets.created_at, sets.id', workoutId);
+        const snapshot = JSON.stringify({ workout, exercises, sets });
+        const deletedAt = Date.now();
+        await db.runAsync('INSERT OR REPLACE INTO deleted_workouts (workout_id, deleted_at, snapshot_json) VALUES (?, ?, ?)', workoutId, deletedAt, snapshot);
+        await db.runAsync('INSERT INTO workout_audit (id, workout_id, event_type, payload_json, created_at) VALUES (?, ?, ?, ?, ?)', makeId(), workoutId, 'workout_deleted', snapshot, deletedAt);
+        await db.runAsync('DELETE FROM workouts WHERE id = ?', workoutId);
+      });
+    });
+  },
+
+  async deleteAll(): Promise<void> {
+    await serialWrite(async () => {
+      const db = await database();
+      await db.withTransactionAsync(async () => {
+        await db.execAsync('DELETE FROM workout_audit; DELETE FROM deleted_workouts; DELETE FROM sets; DELETE FROM exercises; DELETE FROM workouts; DELETE FROM routine_exercises; DELETE FROM routines; DELETE FROM app_settings;');
+      });
+    });
   },
 };

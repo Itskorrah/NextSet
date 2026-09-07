@@ -1,4 +1,5 @@
 export type ExerciseMode = 'weight' | 'bodyweight' | 'time';
+export type LoadUnit = 'kg' | 'lb';
 
 export type WorkoutStatus = 'active' | 'completed';
 
@@ -37,6 +38,10 @@ export interface RoutineRecord {
   exercises: Array<Pick<ExerciseRecord, 'definitionKey' | 'name' | 'mode' | 'position'>>;
 }
 
+export interface AppSettings {
+  loadUnit: LoadUnit;
+}
+
 export interface ProgressRecord {
   definitionKey: string;
   name: string;
@@ -58,16 +63,25 @@ export const CATALOGUE: Array<Pick<ExerciseRecord, 'definitionKey' | 'name' | 'm
   { definitionKey: 'catalogue:plank:time', name: 'Plank', mode: 'time' },
 ];
 
-export function formatLoad(grams: number | null): string {
+export function formatLoad(grams: number | null, unit: LoadUnit = 'kg'): string {
   if (grams === null) return '—';
-  const kilograms = grams / 1000;
-  return `${Number.isInteger(kilograms) ? kilograms : kilograms.toFixed(1)} kg`;
+  const value = unit === 'kg' ? grams / 1000 : grams / 453.59237;
+  const rounded = Number(value.toFixed(1));
+  return `${rounded} ${unit}`;
 }
 
-export function formatSet(set: SetRecord, mode: ExerciseMode): string {
+export function formatSet(set: SetRecord, mode: ExerciseMode, unit: LoadUnit = 'kg'): string {
   if (mode === 'time') return `${set.durationSeconds ?? 0} sec`;
   if (mode === 'bodyweight') return `${set.reps ?? 0} reps`;
-  return `${formatLoad(set.loadGrams)} × ${set.reps ?? 0}`;
+  return `${formatLoad(set.loadGrams, unit)} × ${set.reps ?? 0}`;
+}
+
+export function loadToGrams(value: number, unit: LoadUnit): number {
+  return Math.round(value * (unit === 'kg' ? 1000 : 453.59237));
+}
+
+export function gramsToLoad(grams: number, unit: LoadUnit): number {
+  return grams / (unit === 'kg' ? 1000 : 453.59237);
 }
 
 export function makeId(): string {

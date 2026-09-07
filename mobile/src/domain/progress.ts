@@ -1,4 +1,4 @@
-import type { ExerciseMode, ProgressRecord, WorkoutRecord } from './models';
+import { formatLoad, type ExerciseMode, type LoadUnit, type ProgressRecord, type WorkoutRecord } from './models.ts';
 
 export function deriveProgress(workouts: WorkoutRecord[]): ProgressRecord[] {
   const byExercise = new Map<string, { record: ProgressRecord; workoutIds: Set<string> }>();
@@ -24,12 +24,12 @@ export function deriveProgress(workouts: WorkoutRecord[]): ProgressRecord[] {
     .sort((left, right) => left.name.localeCompare(right.name));
 }
 
-export function progressDescription(record: ProgressRecord): string {
+export function progressDescription(record: ProgressRecord, unit: LoadUnit = 'kg'): string {
   const sessions = `${record.sessions} recorded session${record.sessions === 1 ? '' : 's'}`;
   if (record.sessions < 2) return `${sessions} · log this exercise again to compare it`;
   const mode: ExerciseMode = record.mode;
   if (mode === 'time') return `${sessions} · longest set ${record.bestDurationSeconds ?? 0} sec`;
   if (mode === 'bodyweight') return `${sessions} · most reps ${record.bestReps ?? 0}`;
-  const load = record.bestLoadGrams === null ? '—' : `${record.bestLoadGrams / 1000} kg`;
+  const load = formatLoad(record.bestLoadGrams, unit);
   return `${sessions} · heaviest recorded set ${load}`;
 }
