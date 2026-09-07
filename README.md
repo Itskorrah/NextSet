@@ -2,7 +2,13 @@
 
 NextSet is a mobile workout logger focused on recording workouts quickly, repeating what works, and understanding progress. Goals, programmes and schedules are not required.
 
-This repository completed its product foundation and system-design milestone on 2026-09-07. It now contains the approved product rules, user journeys, architecture decisions, quality standards, disposable visual prototypes, and the local-first native mobile application as it is built.
+This repository completed its product foundation and system-design milestone on 2026-09-07. It now contains the approved product rules, user journeys, architecture decisions, quality standards, disposable visual prototypes, and the local-first native mobile application.
+
+## Current app state
+
+The native application in [`mobile/`](mobile/) is a logging-first Expo/React Native app backed by local SQLite. It supports blank workout starts, workout names, exercise and set logging, safe editing/deletion with Undo, repeat and optional reusable routines, history, descriptive progress, kg/lb preferences, export, delete-all, and active-workout recovery. It has no account, cloud sync, programme, goal, or schedule requirement.
+
+The owner-selected NS Monogram is configured as the iOS app icon, with matching Android adaptive and themed-icon assets. The app currently runs as a signed development build on a physical iPhone. A standalone/TestFlight distribution build is planned next; it is not yet configured.
 
 ## Review this milestone
 
@@ -16,7 +22,7 @@ Start with:
 6. [`docs/domain/workout-progression-rulebook.md`](docs/domain/workout-progression-rulebook.md)
 7. [`docs/quality/release-readiness.md`](docs/quality/release-readiness.md)
 
-The current logging-first Tempo Ledger proposal and the preserved earlier three design directions are reviewable under [`prototypes/`](prototypes/). The current preview starts empty and keeps entered workouts only in memory until reload. The legacy directions use illustrative sample data. Neither is a production workout database.
+The current logging-first Tempo Ledger proposal and the preserved earlier three design directions are reviewable under [`prototypes/`](prototypes/). Those previews are disposable design artefacts; the native app in [`mobile/`](mobile/) is the durable local workout implementation. The legacy directions use illustrative sample data.
 
 ## Phase boundary
 
