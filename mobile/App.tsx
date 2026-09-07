@@ -26,6 +26,7 @@ import { deriveProgress, progressDescription } from './src/domain/progress';
 import { workoutRepository } from './src/storage/workoutRepository';
 
 type Tab = 'workouts' | 'history' | 'progress' | 'settings';
+type UndoAction = { message: string; restore: () => Promise<void> };
 
 export default function App() {
   return <SafeAreaProvider><NextSetApp /></SafeAreaProvider>;
@@ -42,6 +43,8 @@ function NextSetApp() {
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const [selectedRoutineId, setSelectedRoutineId] = useState<string | null>(null);
   const [editingSet, setEditingSet] = useState<{ set: SetRecord; mode: ExerciseMode } | null>(null);
+  const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
+  const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reduceMotion = useReducedMotion();
   const screenOpacity = useState(() => new Animated.Value(1))[0];
   const screenOffset = useState(() => new Animated.Value(0))[0];
@@ -67,6 +70,10 @@ function NextSetApp() {
     });
   }, [refresh]);
 
+  useEffect(() => () => {
+    if (undoTimer.current) clearTimeout(undoTimer.current);
+  }, []);
+
   useEffect(() => {
     if (reduceMotion === null) return;
     if (reduceMotion) {
@@ -85,6 +92,33 @@ function NextSetApp() {
   const startBlank = async () => {
     await workoutRepository.start();
     await refresh();
+  };
+
+  const offerUndo = useCallback((action: UndoAction) => {
+    if (undoTimer.current) clearTimeout(undoTimer.current);
+    setUndoAction(action);
+    undoTimer.current = setTimeout(() => setUndoAction(null), 6000);
+  }, []);
+
+  const undoLastDelete = async () => {
+    if (!undoAction) return;
+    if (undoTimer.current) clearTimeout(undoTimer.current);
+    await undoAction.restore();
+    await refresh();
+    setUndoAction(null);
+  };
+
+  const removeExercise = async (exercise: ExerciseRecord) => {
+    await workoutRepository.deleteExercise(exercise.id);
+    await refresh();
+    offerUndo({ message: `${exercise.name} removed`, restore: () => workoutRepository.restoreExercise(exercise) });
+  };
+
+  const removeWorkout = async (workout: WorkoutRecord) => {
+    await workoutRepository.deleteWorkout(workout.id);
+    setSelectedHistoryId((selected) => selected === workout.id ? null : selected);
+    await refresh();
+    offerUndo({ message: 'Workout deleted', restore: () => workoutRepository.restoreWorkout(workout) });
   };
 
   const selectedHistory = history.find((workout) => workout.id === selectedHistoryId) ?? null;
@@ -111,11 +145,11 @@ function NextSetApp() {
       >
         <Animated.View style={{ gap: 16, opacity: screenOpacity, transform: [{ translateY: screenOffset }] }}>
           {tab === 'workouts' && (active ? (
-            <ActiveWorkout workout={active} unit={loadUnit} refresh={refresh} openPicker={() => setPickerOpen(true)} editSet={setEditingSet} />
+            <ActiveWorkout workout={active} unit={loadUnit} refresh={refresh} openPicker={() => setPickerOpen(true)} editSet={setEditingSet} removeExercise={removeExercise} />
           ) : (
             <WorkoutsHome startBlank={startBlank} routines={routines} refresh={refresh} manageRoutine={setSelectedRoutineId} />
           ))}
-          {tab === 'history' && <HistoryView history={history} select={setSelectedHistoryId} />}
+          {tab === 'history' && <HistoryView history={history} select={setSelectedHistoryId} removeWorkout={removeWorkout} />}
           {tab === 'progress' && <ProgressView history={history} unit={loadUnit} />}
           {tab === 'settings' && <SettingsView unit={loadUnit} refresh={refresh} />}
         </Animated.View>
@@ -156,16 +190,12 @@ function NextSetApp() {
         }}
         unit={loadUnit}
         onEditSet={(set, mode) => setEditingSet({ set, mode })}
-        onDelete={async () => {
-          if (!selectedHistory) return;
-          await workoutRepository.deleteWorkout(selectedHistory.id);
-          setSelectedHistoryId(null);
-          await refresh();
-        }}
+        onDelete={async () => { if (selectedHistory) await removeWorkout(selectedHistory); }}
         refresh={refresh}
       />
       <RoutineDetail routine={routines.find((routine) => routine.id === selectedRoutineId) ?? null} onClose={() => setSelectedRoutineId(null)} refresh={refresh} />
       <SetEditSheet editing={editingSet} unit={loadUnit} onClose={() => setEditingSet(null)} refresh={refresh} />
+      {undoAction && <UndoBar message={undoAction.message} onUndo={undoLastDelete} />}
     </View>
   );
 }
@@ -244,6 +274,42 @@ function SheetModal({ children, onClose, label }: { children: ReactNode; onClose
   </Modal>;
 }
 
+function SwipeableRow({ children, onAction, actionLabel, accessibilityLabel }: { children: ReactNode; onAction: () => Promise<void>; actionLabel: string; accessibilityLabel: string }) {
+  const reduceMotion = useReducedMotion();
+  const translateX = useRef(new Animated.Value(0)).current;
+  const actionWidth = 96;
+  const settle = useCallback((toValue: number) => {
+    if (reduceMotion !== false) translateX.setValue(toValue);
+    else Animated.timing(translateX, { toValue, duration: 150, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+  }, [reduceMotion, translateX]);
+  const panResponder = useMemo(() => PanResponder.create({
+    onMoveShouldSetPanResponder: (_, gesture) => gesture.dx < -8 && Math.abs(gesture.dx) > Math.abs(gesture.dy),
+    onPanResponderMove: (_, gesture) => translateX.setValue(Math.max(-actionWidth, Math.min(0, gesture.dx))),
+    onPanResponderRelease: (_, gesture) => settle(gesture.dx < -44 || gesture.vx < -0.45 ? -actionWidth : 0),
+    onPanResponderTerminate: () => settle(0),
+  }), [settle, translateX]);
+  const act = () => {
+    translateX.setValue(0);
+    safelyRun(onAction);
+  };
+  return <View style={styles.swipeRow}>
+    <Pressable onPress={act} accessibilityRole="button" accessibilityLabel={accessibilityLabel} style={({ pressed }) => [styles.swipeAction, pressed && reduceMotion === false && styles.pressed]}><Text style={styles.swipeActionText}>{actionLabel}</Text></Pressable>
+    <Animated.View style={{ transform: [{ translateX }] }} {...panResponder.panHandlers}>
+      <View accessibilityActions={[{ name: 'delete', label: accessibilityLabel }]} onAccessibilityAction={(event) => { if (event.nativeEvent.actionName === 'delete') act(); }}>
+        {children}
+      </View>
+    </Animated.View>
+  </View>;
+}
+
+function UndoBar({ message, onUndo }: { message: string; onUndo: () => Promise<void> }) {
+  const insets = useSafeAreaInsets();
+  return <View style={[styles.undoBar, { bottom: insets.bottom + 68 }]} accessibilityLiveRegion="polite">
+    <Text style={styles.undoMessage}>{message}</Text>
+    <Pressable onPress={() => safelyRun(onUndo)} accessibilityRole="button" accessibilityLabel={`Undo: ${message}`} style={({ pressed }) => [styles.undoButton, pressed && styles.undoPressed]}><Text style={styles.undoButtonText}>Undo</Text></Pressable>
+  </View>;
+}
+
 function WorkoutsHome({ startBlank, routines, refresh, manageRoutine }: { startBlank: () => Promise<void>; routines: RoutineRecord[]; refresh: () => Promise<void>; manageRoutine: (id: string) => void }) {
   return <>
     <Text style={styles.eyebrow}>WORKOUTS</Text>
@@ -260,7 +326,7 @@ function WorkoutsHome({ startBlank, routines, refresh, manageRoutine }: { startB
   </>;
 }
 
-function ActiveWorkout({ workout, unit, refresh, openPicker, editSet }: { workout: WorkoutRecord; unit: LoadUnit; refresh: () => Promise<void>; openPicker: () => void; editSet: (editing: { set: SetRecord; mode: ExerciseMode }) => void }) {
+function ActiveWorkout({ workout, unit, refresh, openPicker, editSet, removeExercise }: { workout: WorkoutRecord; unit: LoadUnit; refresh: () => Promise<void>; openPicker: () => void; editSet: (editing: { set: SetRecord; mode: ExerciseMode }) => void; removeExercise: (exercise: ExerciseRecord) => Promise<void> }) {
   const setCount = workout.exercises.reduce((total, exercise) => total + exercise.sets.length, 0);
   const finish = async () => {
     const finished = await workoutRepository.finish(workout);
@@ -275,13 +341,13 @@ function ActiveWorkout({ workout, unit, refresh, openPicker, editSet }: { workou
     <View style={styles.titleRow}><Text style={styles.title}>{workout.title}</Text><Text style={styles.setCount}>{setCount} sets logged</Text></View>
     <Text style={styles.muted}>This active workout is saved locally and will be ready when you reopen NextSet.</Text>
     {workout.exercises.length === 0 && <View style={styles.emptyPanel}><Text style={styles.cardTitle}>What are you training?</Text><Text style={styles.muted}>Add an exercise, then record the set you actually complete.</Text></View>}
-    {workout.exercises.map((exercise) => <ExerciseCard key={exercise.id} exercise={exercise} unit={unit} refresh={refresh} editSet={editSet} />)}
+    {workout.exercises.map((exercise) => <SwipeableRow key={exercise.id} accessibilityLabel={`Remove ${exercise.name}`} actionLabel="Remove" onAction={() => removeExercise(exercise)}><ExerciseCard exercise={exercise} unit={unit} refresh={refresh} editSet={editSet} removeExercise={() => removeExercise(exercise)} /></SwipeableRow>)}
     <OutlineAction label="Add exercise" onPress={openPicker} />
     <Action label="Finish workout" onPress={finish} />
   </>;
 }
 
-function ExerciseCard({ exercise, unit, refresh, editSet }: { exercise: ExerciseRecord; unit: LoadUnit; refresh: () => Promise<void>; editSet: (editing: { set: SetRecord; mode: ExerciseMode }) => void }) {
+function ExerciseCard({ exercise, unit, refresh, editSet, removeExercise }: { exercise: ExerciseRecord; unit: LoadUnit; refresh: () => Promise<void>; editSet: (editing: { set: SetRecord; mode: ExerciseMode }) => void; removeExercise: () => Promise<void> }) {
   const [load, setLoad] = useState('');
   const [reps, setReps] = useState('');
   const [seconds, setSeconds] = useState('');
@@ -297,7 +363,7 @@ function ExerciseCard({ exercise, unit, refresh, editSet }: { exercise: Exercise
     await refresh();
   };
   return <View style={styles.exerciseCard}>
-    <View style={styles.cardHeader}><View><Text style={styles.cardTitle}>{exercise.name}</Text><Text style={styles.mode}>{modeLabel(exercise.mode)}</Text></View><Text style={styles.setNumber}>{exercise.sets.length} SETS</Text></View>
+    <View style={styles.cardHeader}><View style={styles.flex}><Text style={styles.cardTitle}>{exercise.name}</Text><Text style={styles.mode}>{modeLabel(exercise.mode)}</Text></View><View style={styles.exerciseActions}><Text style={styles.setNumber}>{exercise.sets.length} SETS</Text><Pressable onPress={() => safelyRun(removeExercise)} accessibilityRole="button" accessibilityLabel={`Remove ${exercise.name}`} style={({ pressed }) => [styles.removeExerciseButton, pressed && styles.undoPressed]}><Text style={styles.removeExerciseText}>Remove</Text></Pressable></View></View>
     {exercise.sets.map((set, index) => <Pressable onPress={() => editSet({ set, mode: exercise.mode })} accessibilityRole="button" accessibilityLabel={`Edit set ${index + 1}`} style={styles.loggedSet} key={set.id}><Text style={styles.setNumber}>SET {index + 1}</Text><Text style={styles.setValue}>{formatSet(set, exercise.mode, unit)}</Text></Pressable>)}
     <View style={styles.inputs}>
       {exercise.mode === 'weight' && <NumericInput label={unit} value={load} onChangeText={setLoad} />}
@@ -308,13 +374,15 @@ function ExerciseCard({ exercise, unit, refresh, editSet }: { exercise: Exercise
   </View>;
 }
 
-function HistoryView({ history, select }: { history: WorkoutRecord[]; select: (id: string) => void }) {
+function HistoryView({ history, select, removeWorkout }: { history: WorkoutRecord[]; select: (id: string) => void; removeWorkout: (workout: WorkoutRecord) => Promise<void> }) {
   return <>
     <Text style={styles.eyebrow}>HISTORY</Text><Text style={styles.title}>Your actual workouts.</Text>
     {history.length === 0 ? <View style={styles.emptyPanel}><Text style={styles.cardTitle}>No completed workouts yet</Text><Text style={styles.muted}>Finished workouts will appear here, with exactly the sets you logged.</Text></View> : history.map((workout) => (
-      <Pressable key={workout.id} onPress={() => select(workout.id)} accessibilityRole="button" accessibilityLabel={`Open ${workout.title}`} style={styles.historyCard}>
-        <Text style={styles.cardTitle}>{workout.title}</Text><Text style={styles.muted}>{new Date(workout.completedAt ?? workout.startedAt).toLocaleDateString()} · {workout.exercises.reduce((total, exercise) => total + exercise.sets.length, 0)} sets</Text>
-      </Pressable>
+      <SwipeableRow key={workout.id} accessibilityLabel={`Delete ${workout.title}`} actionLabel="Delete" onAction={() => removeWorkout(workout)}>
+        <Pressable onPress={() => select(workout.id)} accessibilityRole="button" accessibilityLabel={`Open ${workout.title}`} style={styles.historyCard}>
+          <Text style={styles.cardTitle}>{workout.title}</Text><Text style={styles.muted}>{new Date(workout.completedAt ?? workout.startedAt).toLocaleDateString()} · {workout.exercises.reduce((total, exercise) => total + exercise.sets.length, 0)} sets</Text>
+        </Pressable>
+      </SwipeableRow>
     ))}
   </>;
 }
@@ -401,7 +469,7 @@ function WorkoutDetail({ workout, onClose, onRepeat, onSaveRoutine, unit, onEdit
       <TextInput value={title} onChangeText={setTitle} style={styles.titleInput} accessibilityLabel="Workout name" />
       <SmallButton label="Save name" onPress={async () => { await workoutRepository.renameWorkout(workout.id, title); await refresh(); }} />
       <ScrollView keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} keyboardShouldPersistTaps="handled" onScrollBeginDrag={() => Keyboard.dismiss()}>{workout.exercises.map((exercise) => <View key={exercise.id} style={styles.detailExercise}><Text style={styles.cardTitle}>{exercise.name}</Text>{exercise.sets.map((set, index) => <Pressable key={set.id} onPress={() => onEditSet(set, exercise.mode)} accessibilityRole="button"><Text style={styles.muted}>Set {index + 1} · {formatSet(set, exercise.mode, unit)} · Edit</Text></Pressable>)}</View>)}</ScrollView>
-      <Action label="Repeat workout" onPress={onRepeat} /><OutlineAction label="Save as routine" onPress={onSaveRoutine} /><Text style={styles.helper}>Repeat starts a new workout now. Save as routine creates a reusable exercise template.</Text><OutlineAction label="Delete workout" onPress={() => Alert.alert('Delete this workout?', 'This removes its recorded sets and changes your progress.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Delete', style: 'destructive', onPress: () => safelyRun(onDelete) }])} /><SmallButton label="Close" onPress={onClose} />
+      <Action label="Repeat workout" onPress={onRepeat} /><OutlineAction label="Save as routine" onPress={onSaveRoutine} /><Text style={styles.helper}>Repeat starts a new workout now. Save as routine creates a reusable exercise template.</Text><OutlineAction label="Delete workout" onPress={onDelete} /><SmallButton label="Close" onPress={onClose} />
   </SheetModal>;
 }
 
@@ -469,6 +537,9 @@ const styles = StyleSheet.create({
   cardTitle: { color: COLORS.ink, fontSize: 17, fontWeight: '700' },
   exerciseCard: { backgroundColor: COLORS.surface, borderWidth: 1, borderColor: COLORS.line, borderRadius: 12, padding: 16, gap: 12 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
+  exerciseActions: { alignItems: 'flex-end', gap: 2 },
+  removeExerciseButton: { minHeight: 48, minWidth: 64, paddingHorizontal: 8, justifyContent: 'center', alignItems: 'flex-end' },
+  removeExerciseText: { color: COLORS.vermilion, fontSize: 12, fontWeight: '800' },
   mode: { color: COLORS.olive, fontSize: 12, fontWeight: '700', marginTop: 3 },
   setNumber: { color: COLORS.muted, fontSize: 11, fontWeight: '800', letterSpacing: .7 },
   loggedSet: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: StyleSheet.hairlineWidth, borderColor: COLORS.line, paddingTop: 10 },
@@ -492,6 +563,14 @@ const styles = StyleSheet.create({
   sheetDragZone: { minHeight: 34, alignItems: 'center', justifyContent: 'center', marginHorizontal: -20 },
   sheetHandle: { width: 38, height: 4, borderRadius: 2, backgroundColor: COLORS.muted, opacity: 0.55 },
   setEditorContent: { gap: 14 },
+  swipeRow: { overflow: 'hidden', borderRadius: 12 },
+  swipeAction: { position: 'absolute', top: 0, right: 0, bottom: 0, width: 96, paddingHorizontal: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.vermilion },
+  swipeActionText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
+  undoBar: { position: 'absolute', left: 12, right: 12, minHeight: 52, paddingLeft: 16, paddingRight: 8, borderRadius: 12, backgroundColor: COLORS.ink, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', shadowColor: COLORS.ink, shadowOpacity: 0.2, shadowRadius: 12, shadowOffset: { width: 0, height: 4 } },
+  undoMessage: { color: '#FFFFFF', fontSize: 14, fontWeight: '700', flex: 1 },
+  undoButton: { minHeight: 44, minWidth: 64, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
+  undoButtonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800', textDecorationLine: 'underline' },
+  undoPressed: { opacity: 0.68 },
   detailExercise: { paddingVertical: 11, gap: 3, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: COLORS.line },
   helper: { color: COLORS.muted, fontSize: 13, lineHeight: 19 },
   pickerRow: { paddingVertical: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: COLORS.line },
