@@ -1,6 +1,6 @@
 # NextSet visual directions
 
-Status: three foundation proposals; none selected  
+Status: Tempo Ledger selected; Field Kit and Open Pace retained as historical foundation proposals
 Date: 2026-08-06  
 Decision owner: product owner
 
@@ -9,6 +9,8 @@ Decision owner: product owner
 The owner requested a logging-first redesign using **Tempo Ledger as the proposed base**. The default prototype now targets Workouts, an empty workout/exercise picker, fast set entry, optional routines, history and descriptive progress. It removes goal/programme/schedule gates. The existing Tempo active-workout reference supplies colour, typographic hierarchy, ledger rows and restrained actions; changed navigation/content follows the newer owner instruction, so pixel identity to the old programme-centric screen is not claimed. The other directions and old flow remain available only at `?review=legacy` for historical comparison. The scored comparison below is the earlier design hypothesis, not usability evidence or a final selection.
 
 The supplied [mobile-ios-design skill](https://github.com/wshobson/agents/blob/main/plugins/ui-design/skills/mobile-ios-design/SKILL.md) informs semantic hierarchy, clear labelled tabs, safe-area clearance and accessible controls. Its SwiftUI code does not change the proposed React Native/Expo stack. Root 48×48 target requirements take precedence over the skill's 44-point sample. Physical VoiceOver/Dynamic Type/dark-mode verification remains a future native gate.
+
+The application icon is the owner-selected **NS Monogram**: a black N and vermilion S on a warm paper field. The exact selected artwork is stored as [`../../mobile/assets/nextset-icon.png`](../../mobile/assets/nextset-icon.png), configured in Expo, and must be checked at actual home-screen size before a public release.
 
 
 ## Evidence and interpretation

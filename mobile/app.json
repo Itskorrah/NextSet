@@ -2,6 +2,7 @@
   "expo": {
     "name": "NextSet",
     "slug": "nextset",
+    "icon": "./assets/nextset-icon.png",
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -10,7 +11,12 @@
       "bundleIdentifier": "com.kararmojid.nextset"
     },
     "android": {
-      "package": "com.kararmojid.nextset"
+      "package": "com.kararmojid.nextset",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/nextset-adaptive-foreground.png",
+        "backgroundColor": "#F5F0E6",
+        "monochromeImage": "./assets/nextset-adaptive-monochrome.png"
+      }
     },
     "plugins": [
       "expo-sqlite",

@@ -90,12 +90,18 @@ The pinned `package-lock.json` records the following direct-package metadata:
 
 This table is a design-prototype snapshot, not a complete transitive licence report, security review or SBOM. A clean install from the pinned npm lockfile completed for prototype verification, but installed package licence files have not been reconciled into a generated notice bundle or SBOM. Before any distribution, generate a complete transitive inventory, inspect installed package contents/notices and resolve discrepancies.
 
+## Approved owner-supplied application icon
+
+| Asset ID | Files | Provenance and rightsholder record | Permitted use and status |
+|---|---|---|---|
+| NS-ICON-001 | [`../../mobile/assets/nextset-icon.png`](../../mobile/assets/nextset-icon.png), `nextset-adaptive-foreground.png`, `nextset-adaptive-monochrome.png` | Product owner supplied the **NextSet — App Icon Concepts** sheet in this task on 2026-09-08 and explicitly selected concept 04, NS Monogram. The packaged files are exact crops/technical platform derivatives of that selected mark. The product owner authorises its use in NextSet; the exact uploaded source is retained in the task conversation rather than this repository. SHA-256: root `8c17dd5ae57fcbabd2685e813ca8371419225664acb561c9c6b13fcecfcd8a51`; Android foreground `f8df70965bdf21ff7fbf4a04ce2ff07826ea5e627169b0840859c148dcb33652`; Android monochrome `3585d0e33c465bc9982ef47d3d8a5f7e9ced735d51f409abab1cf4e536223fec`. This owner record does not establish trademark clearance. | Approved for the NextSet native development build under D-011. The root icon is an opaque 1024×1024 warm-paper field with black N and vermilion S; Android foreground and monochrome files are technical derivatives for launcher masking and themed icons. Name/trademark and public-brand review remain required before external release. |
+
 ## Original product assets not yet created
 
 | Asset category | Current state | Requirement before production |
 |---|---|---|
 | NextSet wordmark/logo | Reference-only provisional treatments | Name clearance, original source file, ownership assignment, monochrome/high-contrast variants and trademark review |
-| App icon and launch assets | Not created/approved | Original work, light/dark/tinted platform variants, accessibility/contrast review and source/licence record |
+| App icon and launch assets | NS-ICON-001 approved for the native development build; launch screen art not created | Recheck at actual launcher sizes, retain provenance/hash record, obtain public-brand clearance and create any future launch-screen variants |
 | Exercise icons/illustrations | No maintained production set | Original or appropriately licensed set, exercise/content review, text alternative, update owner and no false technique claim |
 | Charts/graphics | Prototype CSS shapes only | Implement from product data; accessible summary/table; no copied competitor visual signature |
 | Sound/haptic patterns | Not created as files | Prefer platform effects; licence any sound; provide sound/haptic-off alternatives |
