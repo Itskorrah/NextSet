@@ -7,10 +7,10 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.nextset.app"
+      "bundleIdentifier": "com.kararmojid.nextset"
     },
     "android": {
-      "package": "com.nextset.app"
+      "package": "com.kararmojid.nextset"
     },
     "plugins": [
       "expo-sqlite",
