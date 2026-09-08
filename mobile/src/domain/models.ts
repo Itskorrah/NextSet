@@ -52,16 +52,89 @@ export interface ProgressRecord {
   bestDurationSeconds: number | null;
 }
 
-export const CATALOGUE: Array<Pick<ExerciseRecord, 'definitionKey' | 'name' | 'mode'>> = [
-  { definitionKey: 'catalogue:barbell-bench-press:weight', name: 'Barbell bench press', mode: 'weight' },
-  { definitionKey: 'catalogue:barbell-squat:weight', name: 'Barbell squat', mode: 'weight' },
-  { definitionKey: 'catalogue:barbell-deadlift:weight', name: 'Barbell deadlift', mode: 'weight' },
-  { definitionKey: 'catalogue:lat-pulldown:weight', name: 'Lat pulldown', mode: 'weight' },
-  { definitionKey: 'catalogue:dumbbell-shoulder-press:weight', name: 'Dumbbell shoulder press', mode: 'weight' },
-  { definitionKey: 'catalogue:push-up:bodyweight', name: 'Push-up', mode: 'bodyweight' },
-  { definitionKey: 'catalogue:pull-up:bodyweight', name: 'Pull-up', mode: 'bodyweight' },
-  { definitionKey: 'catalogue:plank:time', name: 'Plank', mode: 'time' },
+export type CatalogueExercise = Pick<ExerciseRecord, 'definitionKey' | 'name' | 'mode'>;
+
+export interface CatalogueSection {
+  title: string;
+  exercises: CatalogueExercise[];
+}
+
+export const CATALOGUE_SECTIONS: CatalogueSection[] = [
+  {
+    title: 'Chest & shoulders',
+    exercises: [
+      { definitionKey: 'catalogue:barbell-bench-press:weight', name: 'Barbell bench press', mode: 'weight' },
+      { definitionKey: 'catalogue:incline-barbell-bench-press:weight', name: 'Incline barbell bench press', mode: 'weight' },
+      { definitionKey: 'catalogue:dumbbell-bench-press:weight', name: 'Dumbbell bench press', mode: 'weight' },
+      { definitionKey: 'catalogue:incline-dumbbell-bench-press:weight', name: 'Incline dumbbell bench press', mode: 'weight' },
+      { definitionKey: 'catalogue:machine-chest-press:weight', name: 'Machine chest press', mode: 'weight' },
+      { definitionKey: 'catalogue:incline-machine-chest-press:weight', name: 'Incline machine chest press', mode: 'weight' },
+      { definitionKey: 'catalogue:cable-fly:weight', name: 'Cable fly', mode: 'weight' },
+      { definitionKey: 'catalogue:pec-deck:weight', name: 'Pec deck', mode: 'weight' },
+      { definitionKey: 'catalogue:dumbbell-shoulder-press:weight', name: 'Dumbbell shoulder press', mode: 'weight' },
+      { definitionKey: 'catalogue:machine-shoulder-press:weight', name: 'Machine shoulder press', mode: 'weight' },
+      { definitionKey: 'catalogue:dumbbell-lateral-raise:weight', name: 'Dumbbell lateral raise', mode: 'weight' },
+      { definitionKey: 'catalogue:lateral-raise-machine:weight', name: 'Lateral raise machine', mode: 'weight' },
+      { definitionKey: 'catalogue:reverse-pec-deck:weight', name: 'Reverse pec deck', mode: 'weight' },
+      { definitionKey: 'catalogue:face-pull:weight', name: 'Face pull', mode: 'weight' },
+    ],
+  },
+  {
+    title: 'Back',
+    exercises: [
+      { definitionKey: 'catalogue:lat-pulldown:weight', name: 'Lat pulldown', mode: 'weight' },
+      { definitionKey: 'catalogue:pull-up:bodyweight', name: 'Pull-up', mode: 'bodyweight' },
+      { definitionKey: 'catalogue:seated-cable-row:weight', name: 'Seated cable row', mode: 'weight' },
+      { definitionKey: 'catalogue:single-arm-dumbbell-row:weight', name: 'Single-arm dumbbell row', mode: 'weight' },
+      { definitionKey: 'catalogue:chest-supported-row:weight', name: 'Chest-supported row', mode: 'weight' },
+      { definitionKey: 'catalogue:barbell-row:weight', name: 'Barbell row', mode: 'weight' },
+      { definitionKey: 'catalogue:t-bar-row:weight', name: 'T-bar row', mode: 'weight' },
+      { definitionKey: 'catalogue:straight-arm-cable-pulldown:weight', name: 'Straight-arm cable pulldown', mode: 'weight' },
+    ],
+  },
+  {
+    title: 'Legs',
+    exercises: [
+      { definitionKey: 'catalogue:barbell-squat:weight', name: 'Barbell squat', mode: 'weight' },
+      { definitionKey: 'catalogue:romanian-deadlift:weight', name: 'Romanian deadlift', mode: 'weight' },
+      { definitionKey: 'catalogue:barbell-deadlift:weight', name: 'Barbell deadlift', mode: 'weight' },
+      { definitionKey: 'catalogue:leg-press:weight', name: 'Leg press', mode: 'weight' },
+      { definitionKey: 'catalogue:hack-squat:weight', name: 'Hack squat', mode: 'weight' },
+      { definitionKey: 'catalogue:leg-extension:weight', name: 'Leg extension', mode: 'weight' },
+      { definitionKey: 'catalogue:seated-leg-curl:weight', name: 'Seated leg curl', mode: 'weight' },
+      { definitionKey: 'catalogue:lying-leg-curl:weight', name: 'Lying leg curl', mode: 'weight' },
+      { definitionKey: 'catalogue:bulgarian-split-squat:weight', name: 'Bulgarian split squat', mode: 'weight' },
+      { definitionKey: 'catalogue:barbell-hip-thrust:weight', name: 'Barbell hip thrust', mode: 'weight' },
+      { definitionKey: 'catalogue:standing-calf-raise:weight', name: 'Standing calf raise', mode: 'weight' },
+      { definitionKey: 'catalogue:seated-calf-raise:weight', name: 'Seated calf raise', mode: 'weight' },
+    ],
+  },
+  {
+    title: 'Arms',
+    exercises: [
+      { definitionKey: 'catalogue:weighted-dip:weight', name: 'Weighted dip', mode: 'weight' },
+      { definitionKey: 'catalogue:cable-triceps-pushdown:weight', name: 'Cable triceps pushdown', mode: 'weight' },
+      { definitionKey: 'catalogue:overhead-cable-triceps-extension:weight', name: 'Overhead cable triceps extension', mode: 'weight' },
+      { definitionKey: 'catalogue:skull-crusher:weight', name: 'Skull crusher', mode: 'weight' },
+      { definitionKey: 'catalogue:dumbbell-biceps-curl:weight', name: 'Dumbbell biceps curl', mode: 'weight' },
+      { definitionKey: 'catalogue:hammer-curl:weight', name: 'Hammer curl', mode: 'weight' },
+      { definitionKey: 'catalogue:cable-biceps-curl:weight', name: 'Cable biceps curl', mode: 'weight' },
+      { definitionKey: 'catalogue:preacher-curl:weight', name: 'Preacher curl', mode: 'weight' },
+    ],
+  },
+  {
+    title: 'Bodyweight & core',
+    exercises: [
+      { definitionKey: 'catalogue:push-up:bodyweight', name: 'Push-up', mode: 'bodyweight' },
+      { definitionKey: 'catalogue:bodyweight-dip:bodyweight', name: 'Bodyweight dip', mode: 'bodyweight' },
+      { definitionKey: 'catalogue:plank:time', name: 'Plank', mode: 'time' },
+      { definitionKey: 'catalogue:hanging-knee-raise:bodyweight', name: 'Hanging knee raise', mode: 'bodyweight' },
+      { definitionKey: 'catalogue:cable-crunch:weight', name: 'Cable crunch', mode: 'weight' },
+    ],
+  },
 ];
+
+export const CATALOGUE: CatalogueExercise[] = CATALOGUE_SECTIONS.flatMap((section) => section.exercises);
 
 export function formatLoad(grams: number | null, unit: LoadUnit = 'kg'): string {
   if (grams === null) return '—';

@@ -131,7 +131,7 @@ These are normative product rejections grounded in the brief's user-control, use
 ## 9. Remaining product decisions
 
 - Scope is accepted; final Tempo Ledger treatment, revised critical journeys and architecture await owner review of the updated prototype.
-- Confirm the smallest launch exercise catalogue, editable custom modes and unit/laterality coverage before production. Prototype coverage is narrower and must be labelled.
+- D-012 and D-013 accept the initial 47-movement built-in catalogue, grouped in the picker by Chest & shoulders, Back, Legs, Arms, and Bodyweight & core, with persistent search/category shortcuts and independently expandable sections that are all open by default. Custom exercise modes and unit/laterality coverage still require production validation.
 - The initial trend questions are accepted. Exact display windows and comparison labels require comprehension testing; observed PR categories are proposed in `PRD-FR-026`. Estimated strength/volume scoring and richer analytics remain POST.
 - No analytics collection is assumed. Use moderated research or explicitly consented local beta instrumentation.
 - No routine, programme, recommendation or deferred feature may be required to access history/trends. A blank-workout-only user has the complete v1 experience.
