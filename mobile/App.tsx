@@ -7,6 +7,7 @@ import {
   Easing,
   Keyboard,
   KeyboardAvoidingView,
+  LayoutAnimation,
   Modal,
   PanResponder,
   Platform,
@@ -16,6 +17,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  UIManager,
   View,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -522,10 +524,69 @@ function WorkoutDetail({ workout, onClose, onRepeat, onSaveRoutine, unit, onEdit
 function ExercisePicker({ visible, onClose, onChoose }: { visible: boolean; onClose: () => void; onChoose: (exercise: Pick<ExerciseRecord, 'definitionKey' | 'name' | 'mode'>) => Promise<void> }) {
   const [customName, setCustomName] = useState('');
   const [customMode, setCustomMode] = useState<ExerciseMode>('weight');
+  const [query, setQuery] = useState('');
+  const [expandedSection, setExpandedSection] = useState<string | null>(CATALOGUE_SECTIONS[0].title);
+  const listRef = useRef<ScrollView>(null);
+  const sectionOffsets = useRef<Record<string, number>>({});
+  const pendingSection = useRef<string | null>(null);
+  const reduceMotion = useReducedMotion();
+  const searching = query.trim().length > 0;
+  const visibleSections = useMemo(() => {
+    if (!searching) return CATALOGUE_SECTIONS;
+    const term = query.trim().toLocaleLowerCase();
+    return CATALOGUE_SECTIONS.map((section) => ({ ...section, exercises: section.exercises.filter((exercise) => exercise.name.toLocaleLowerCase().includes(term)) })).filter((section) => section.exercises.length > 0);
+  }, [query, searching]);
+  const animateLayout = useCallback(() => {
+    if (reduceMotion !== false) return;
+    LayoutAnimation.configureNext({ duration: 180, create: { type: LayoutAnimation.Types.easeInEaseOut, property: LayoutAnimation.Properties.opacity }, update: { type: LayoutAnimation.Types.easeInEaseOut }, delete: { type: LayoutAnimation.Types.easeInEaseOut, property: LayoutAnimation.Properties.opacity } });
+  }, [reduceMotion]);
+  const scrollToSection = useCallback((title: string) => {
+    const offset = sectionOffsets.current[title];
+    if (offset === undefined) return;
+    listRef.current?.scrollTo({ y: Math.max(0, offset - 8), animated: reduceMotion === false });
+  }, [reduceMotion]);
+  useEffect(() => {
+    if (searching || pendingSection.current !== expandedSection || expandedSection === null) return;
+    const timeout = setTimeout(() => {
+      scrollToSection(expandedSection);
+      pendingSection.current = null;
+    }, reduceMotion === false ? 180 : 0);
+    return () => clearTimeout(timeout);
+  }, [expandedSection, reduceMotion, scrollToSection, searching]);
+  const focusSection = (title: string) => {
+    Keyboard.dismiss();
+    if (searching) {
+      pendingSection.current = title;
+      animateLayout();
+      setQuery('');
+      if (expandedSection !== title) setExpandedSection(title);
+      return;
+    }
+    if (expandedSection === title) {
+      scrollToSection(title);
+      return;
+    }
+    pendingSection.current = title;
+    animateLayout();
+    setExpandedSection(title);
+  };
+  const toggleSection = (title: string) => {
+    if (expandedSection === title) {
+      animateLayout();
+      setExpandedSection(null);
+      return;
+    }
+    focusSection(title);
+  };
+  useEffect(() => {
+    if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) UIManager.setLayoutAnimationEnabledExperimental(true);
+  }, []);
   if (!visible) return null;
   return <SheetModal onClose={onClose} label="add exercise">
     <Text style={styles.eyebrow}>ADD EXERCISE</Text><Text style={styles.title}>Choose an exercise</Text>
-    <ScrollView keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} keyboardShouldPersistTaps="handled" onScrollBeginDrag={() => Keyboard.dismiss()}>{CATALOGUE_SECTIONS.map((section) => <View key={section.title} style={styles.pickerSection}><Text accessibilityRole="header" style={styles.pickerSectionTitle}>{section.title}</Text>{section.exercises.map((exercise) => <Pressable key={exercise.definitionKey} style={styles.pickerRow} onPress={() => safelyRun(() => onChoose(exercise))}><Text style={styles.cardTitle}>{exercise.name}</Text><Text style={styles.mode}>{modeLabel(exercise.mode)}</Text></Pressable>)}</View>)}</ScrollView>
+    <TextInput value={query} onChangeText={setQuery} placeholder="Search exercises" placeholderTextColor={COLORS.muted} style={styles.pickerSearch} accessibilityLabel="Search exercises" returnKeyType="search" clearButtonMode="while-editing" />
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.categoryRail}>{CATALOGUE_SECTIONS.map((section) => { const active = !searching && expandedSection === section.title; return <Pressable key={section.title} onPress={() => focusSection(section.title)} accessibilityRole="button" accessibilityState={{ selected: active }} style={({ pressed }) => [styles.categoryChip, active && styles.categoryChipActive, pressed && reduceMotion === false && styles.undoPressed]}><Text style={active ? styles.categoryChipTextActive : styles.categoryChipText}>{section.title}</Text>{active && <View style={styles.categoryChipIndicator} />}</Pressable>; })}</ScrollView>
+    <ScrollView ref={listRef} keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} keyboardShouldPersistTaps="handled" onScrollBeginDrag={() => Keyboard.dismiss()}>{visibleSections.map((section) => { const expanded = searching || expandedSection === section.title; const header = <><Text accessibilityRole="header" style={styles.pickerSectionTitle}>{section.title}</Text>{!searching && <Text style={styles.pickerSectionState}>{expanded ? 'Hide' : 'Show'}</Text>}</>; return <View key={section.title} onLayout={({ nativeEvent }) => { sectionOffsets.current[section.title] = nativeEvent.layout.y; }} style={styles.pickerSection}>{searching ? <View style={styles.pickerSectionHeader}>{header}</View> : <Pressable onPress={() => toggleSection(section.title)} accessibilityRole="button" accessibilityState={{ expanded }} style={({ pressed }) => [styles.pickerSectionHeader, pressed && reduceMotion === false && styles.undoPressed]}>{header}</Pressable>}{expanded && section.exercises.map((exercise) => <Pressable key={exercise.definitionKey} style={styles.pickerRow} onPress={() => safelyRun(() => onChoose(exercise))}><Text style={styles.cardTitle}>{exercise.name}</Text><Text style={styles.mode}>{modeLabel(exercise.mode)}</Text></Pressable>)}</View>; })}{searching && visibleSections.length === 0 && <Text style={styles.pickerEmpty}>No built-in exercise matches that search.</Text>}</ScrollView>
     <Text style={styles.sectionLabel}>CUSTOM EXERCISE</Text><TextInput value={customName} onChangeText={setCustomName} placeholder="Exercise name" placeholderTextColor={COLORS.muted} style={styles.textInput} accessibilityLabel="Custom exercise name" />
     <View style={styles.modeButtons}>{(['weight', 'bodyweight', 'time'] as ExerciseMode[]).map((mode) => <Pressable key={mode} onPress={() => setCustomMode(mode)} style={[styles.modeButton, customMode === mode && styles.modeButtonActive]}><Text style={customMode === mode ? styles.modeButtonTextActive : styles.modeButtonText}>{modeLabel(mode)}</Text></Pressable>)}</View>
     <Action label="Add custom exercise" onPress={async () => { if (!customName.trim()) return Alert.alert('Name your exercise first'); await onChoose({ definitionKey: `custom:${makeId()}`, name: customName.trim(), mode: customMode }); setCustomName(''); }} compact />
@@ -628,9 +689,19 @@ const styles = StyleSheet.create({
   undoPressed: { opacity: 0.68 },
   detailExercise: { paddingVertical: 11, gap: 3, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: COLORS.line },
   helper: { color: COLORS.muted, fontSize: 13, lineHeight: 19 },
-  pickerRow: { paddingVertical: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: COLORS.line },
-  pickerSection: { paddingTop: 12 },
-  pickerSectionTitle: { color: COLORS.olive, fontSize: 12, fontWeight: '800', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 3 },
+  pickerSearch: { minHeight: 48, marginTop: 12, paddingHorizontal: 13, color: COLORS.ink, fontSize: 16, backgroundColor: COLORS.surface, borderWidth: 1, borderColor: COLORS.line, borderRadius: 8 },
+  categoryRail: { gap: 8, paddingVertical: 10 },
+  categoryChip: { minHeight: 48, justifyContent: 'center', paddingHorizontal: 13, borderWidth: 1, borderColor: COLORS.line, borderRadius: 8, backgroundColor: COLORS.surface },
+  categoryChipActive: { borderColor: COLORS.olive, backgroundColor: '#E6E9DA' },
+  categoryChipText: { color: COLORS.muted, fontSize: 13, fontWeight: '800' },
+  categoryChipTextActive: { color: COLORS.ink, fontSize: 13, fontWeight: '800' },
+  categoryChipIndicator: { position: 'absolute', right: 13, left: 13, bottom: 5, height: 3, borderRadius: 2, backgroundColor: COLORS.olive },
+  pickerRow: { minHeight: 58, justifyContent: 'center', paddingVertical: 9, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: COLORS.line },
+  pickerSection: { paddingTop: 7 },
+  pickerSectionHeader: { minHeight: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 12, backgroundColor: '#E6E9DA', borderLeftWidth: 4, borderColor: COLORS.olive },
+  pickerSectionTitle: { color: COLORS.ink, fontSize: 14, fontWeight: '800', letterSpacing: .5, textTransform: 'uppercase' },
+  pickerSectionState: { color: COLORS.olive, fontSize: 13, fontWeight: '800' },
+  pickerEmpty: { color: COLORS.muted, fontSize: 15, lineHeight: 22, paddingVertical: 20 },
   textInput: { minHeight: 48, color: COLORS.ink, fontSize: 16, borderBottomWidth: 1, borderColor: COLORS.ink },
   modeButtons: { flexDirection: 'row', gap: 6 },
   modeButton: { flex: 1, minHeight: 48, borderWidth: 1, borderColor: COLORS.line, borderRadius: 8, justifyContent: 'center', alignItems: 'center', padding: 6 },
