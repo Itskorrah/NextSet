@@ -21,7 +21,7 @@ import {
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { CATALOGUE, formatSet, gramsToLoad, makeId, type ExerciseMode, type ExerciseRecord, type LoadUnit, type RoutineRecord, type SetRecord, type WorkoutRecord } from './src/domain/models';
+import { CATALOGUE_SECTIONS, formatSet, gramsToLoad, makeId, type ExerciseMode, type ExerciseRecord, type LoadUnit, type RoutineRecord, type SetRecord, type WorkoutRecord } from './src/domain/models';
 import { deriveProgress, progressDescription } from './src/domain/progress';
 import { workoutRepository } from './src/storage/workoutRepository';
 
@@ -525,7 +525,7 @@ function ExercisePicker({ visible, onClose, onChoose }: { visible: boolean; onCl
   if (!visible) return null;
   return <SheetModal onClose={onClose} label="add exercise">
     <Text style={styles.eyebrow}>ADD EXERCISE</Text><Text style={styles.title}>Choose an exercise</Text>
-    <ScrollView keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} keyboardShouldPersistTaps="handled" onScrollBeginDrag={() => Keyboard.dismiss()}>{CATALOGUE.map((exercise) => <Pressable key={exercise.definitionKey} style={styles.pickerRow} onPress={() => safelyRun(() => onChoose(exercise))}><Text style={styles.cardTitle}>{exercise.name}</Text><Text style={styles.mode}>{modeLabel(exercise.mode)}</Text></Pressable>)}</ScrollView>
+    <ScrollView keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} keyboardShouldPersistTaps="handled" onScrollBeginDrag={() => Keyboard.dismiss()}>{CATALOGUE_SECTIONS.map((section) => <View key={section.title} style={styles.pickerSection}><Text accessibilityRole="header" style={styles.pickerSectionTitle}>{section.title}</Text>{section.exercises.map((exercise) => <Pressable key={exercise.definitionKey} style={styles.pickerRow} onPress={() => safelyRun(() => onChoose(exercise))}><Text style={styles.cardTitle}>{exercise.name}</Text><Text style={styles.mode}>{modeLabel(exercise.mode)}</Text></Pressable>)}</View>)}</ScrollView>
     <Text style={styles.sectionLabel}>CUSTOM EXERCISE</Text><TextInput value={customName} onChangeText={setCustomName} placeholder="Exercise name" placeholderTextColor={COLORS.muted} style={styles.textInput} accessibilityLabel="Custom exercise name" />
     <View style={styles.modeButtons}>{(['weight', 'bodyweight', 'time'] as ExerciseMode[]).map((mode) => <Pressable key={mode} onPress={() => setCustomMode(mode)} style={[styles.modeButton, customMode === mode && styles.modeButtonActive]}><Text style={customMode === mode ? styles.modeButtonTextActive : styles.modeButtonText}>{modeLabel(mode)}</Text></Pressable>)}</View>
     <Action label="Add custom exercise" onPress={async () => { if (!customName.trim()) return Alert.alert('Name your exercise first'); await onChoose({ definitionKey: `custom:${makeId()}`, name: customName.trim(), mode: customMode }); setCustomName(''); }} compact />
@@ -629,6 +629,8 @@ const styles = StyleSheet.create({
   detailExercise: { paddingVertical: 11, gap: 3, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: COLORS.line },
   helper: { color: COLORS.muted, fontSize: 13, lineHeight: 19 },
   pickerRow: { paddingVertical: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: COLORS.line },
+  pickerSection: { paddingTop: 12 },
+  pickerSectionTitle: { color: COLORS.olive, fontSize: 12, fontWeight: '800', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 3 },
   textInput: { minHeight: 48, color: COLORS.ink, fontSize: 16, borderBottomWidth: 1, borderColor: COLORS.ink },
   modeButtons: { flexDirection: 'row', gap: 6 },
   modeButton: { flex: 1, minHeight: 48, borderWidth: 1, borderColor: COLORS.line, borderRadius: 8, justifyContent: 'center', alignItems: 'center', padding: 6 },
