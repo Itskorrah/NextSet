@@ -4,6 +4,16 @@ NextSet is a mobile workout logger focused on recording workouts quickly, repeat
 
 This repository completed its product foundation and system-design milestone on 2026-09-07. It now contains the approved product rules, user journeys, architecture decisions, quality standards, disposable visual prototypes, and the local-first native mobile application.
 
+## Use with Codex — copy-and-paste workflows
+
+Open the relevant project in Codex and paste this prompt to **set up, verify and immediately run** the project's applicable workflow. Respect the existing project permissions and device limits.
+
+```text
+In my current Codex project, set up and use https://github.com/Itskorrah/NextSet. Read README.md, AGENTS.md, existing project skills and prompts/codex/setup-and-run.md. Inspect Git status, preserve existing work, and use only scoped setup. Inspect `AGENTS.md`, the current README, accepted product requirements, architecture decisions, `docs/quality/acceptance-criteria.md` and the manual Codex-format skills under `skills/`. Reconcile any older foundation-phase guidance with the actual current native mobile app state; do not assume an unapproved feature is authorised. Check Expo/React Native dependencies and run the feasible documented local domain/UI tests. Start a safe improvement or review of the existing workout-logging flow, including data integrity and offline recovery. For any new feature or product-boundary decision needing owner approval, stop only that branch and report the explicit choice. Preserve local-first workout history, accessibility, privacy and architecture boundaries. Do not silently add cloud accounts, telemetry, services, data migration or new exercise advice. Owner decisions remain required for product changes outside existing approval; no release without separate permission. Run feasible local checks. Commit, push, PR and merge verified authorised scoped changes when permitted; don't bypass security/branch protection or rely on GitHub Actions. Report evidence and blockers.
+```
+
+Additional copyable prompts: [full setup and execution](prompts/codex/setup-and-run.md) · [update](prompts/codex/update.md) · [resume](prompts/codex/resume.md) · [extended autonomous](prompts/codex/autonomous.md).
+
 ## Current app state
 
 The native application in [`mobile/`](mobile/) is a logging-first Expo/React Native app backed by local SQLite. It supports blank workout starts, workout names, exercise and set logging, safe editing/deletion with Undo, repeat and optional reusable routines, history, descriptive progress, kg/lb preferences, export, delete-all, and active-workout recovery. It has no account, cloud sync, programme, goal, or schedule requirement.
